@@ -294,7 +294,22 @@ function FilterButton({
         userSelect: "none",
       }}
     >
-      {active && activeValue ? `${label}: ${activeValue}` : `${label} ▾`}
+      {active && activeValue ? (
+        `${label}: ${activeValue}`
+      ) : (
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 2 }}>
+          {label}
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            style={{ opacity: 0.7 }}
+          >
+            <path d="M8 11L3 6h10l-5 5z" />
+          </svg>
+        </span>
+      )}
     </div>
   );
 }
