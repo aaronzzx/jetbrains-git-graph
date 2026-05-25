@@ -104,7 +104,7 @@ export function CommitList({
       document.body.style.userSelect = "none";
 
       const onMouseMove = (ev: MouseEvent) => {
-        const diff = ev.clientX - startX;
+        const diff = startX - ev.clientX;
         const newWidth = Math.max(
           column === "author" ? 40 : 60,
           startWidth + diff,
