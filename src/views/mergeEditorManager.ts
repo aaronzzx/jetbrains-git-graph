@@ -46,6 +46,11 @@ export class MergeEditorManager {
       this.panels.delete(filePath);
       routerDisposable.dispose();
     });
+
+    // Maximize editor area for full-screen merge experience
+    void vscode.commands.executeCommand(
+      "workbench.action.maximizeEditorHideSidebar",
+    );
   }
 
   closeMergeEditor(filePath: string): void {
