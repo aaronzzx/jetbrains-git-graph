@@ -340,7 +340,6 @@ export function BranchTree() {
       style={{
         height: "100%",
         overflow: "auto",
-        padding: "4px 0",
       }}
     >
       <div style={{ padding: "4px 8px" }}>

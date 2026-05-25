@@ -29,13 +29,20 @@ function IconCopy() {
 function IconCherryPick() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <circle cx="4.5" cy="4" r="2" stroke="currentColor" />
+      <circle cx="5" cy="11.5" r="2.5" stroke="currentColor" />
+      <circle cx="10.5" cy="10.5" r="2.5" stroke="currentColor" />
       <path
-        d="M4.5 11.5H8.5C9.6 11.5 10.5 10.6 10.5 9.5V8"
+        d="M5 9C5 6 4 4 7 2"
         stroke="currentColor"
+        strokeLinecap="round"
+        fill="none"
       />
-      <path d="M4.5 6.5V14.5" stroke="currentColor" strokeLinecap="round" />
-      <circle cx="10.5" cy="6" r="2" stroke="currentColor" />
+      <path
+        d="M10.5 8C10.5 5.5 11 4 8 2"
+        stroke="currentColor"
+        strokeLinecap="round"
+        fill="none"
+      />
     </svg>
   );
 }

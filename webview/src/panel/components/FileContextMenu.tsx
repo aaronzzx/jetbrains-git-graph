@@ -72,18 +72,20 @@ function IconCherryPick() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="4.5" cy="4" r="2" stroke="currentColor" />
+      <circle cx="5" cy="11.5" r="2.5" stroke="currentColor" />
+      <circle cx="10.5" cy="10.5" r="2.5" stroke="currentColor" />
       <path
-        d="M4.5 11.5H8.5C9.60457 11.5 10.5 10.6046 10.5 9.5V9.5V8"
-        stroke="currentColor"
-      />
-      <path
-        d="M4.5 6.5L4.5 14.5"
+        d="M5 9C5 6 4 4 7 2"
         stroke="currentColor"
         strokeLinecap="round"
-        strokeLinejoin="round"
+        fill="none"
       />
-      <circle cx="10.5" cy="6" r="2" stroke="currentColor" />
+      <path
+        d="M10.5 8C10.5 5.5 11 4 8 2"
+        stroke="currentColor"
+        strokeLinecap="round"
+        fill="none"
+      />
     </svg>
   );
 }
