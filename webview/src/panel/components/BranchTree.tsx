@@ -688,11 +688,31 @@ function BranchContextMenu({
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-    document.addEventListener("mousedown", handleClickOutside);
+    const handleBlur = () => {
+      onClose();
+    };
+    const handleScroll = () => {
+      onClose();
+    };
+    const handleContextMenu = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        onClose();
+      }
+    };
+    // Use capture phase to intercept clicks before any other handler
+    document.addEventListener("mousedown", handleClickOutside, true);
+    document.addEventListener("contextmenu", handleContextMenu, true);
     document.addEventListener("keydown", handleEscape);
+    window.addEventListener("blur", handleBlur);
+    document.addEventListener("scroll", handleScroll, true);
+    window.addEventListener("resize", handleBlur);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside, true);
+      document.removeEventListener("contextmenu", handleContextMenu, true);
       document.removeEventListener("keydown", handleEscape);
+      window.removeEventListener("blur", handleBlur);
+      document.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("resize", handleBlur);
     };
   }, [onClose]);
 
