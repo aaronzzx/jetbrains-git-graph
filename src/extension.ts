@@ -437,6 +437,24 @@ export function activate(context: vscode.ExtensionContext) {
     return { success: true };
   });
 
+  messageRouter.handle("revertFileChanges", async (params) => {
+    if (!gitService) return NOT_GIT_REPO;
+    const hash = params.hash as string;
+    const filePath = params.filePath as string;
+    await gitService.checkoutFileFromParent(hash, filePath);
+    messageRouter.broadcastEvent("gitStateChanged", { scope: "all" });
+    return { success: true };
+  });
+
+  messageRouter.handle("cherryPickFileChanges", async (params) => {
+    if (!gitService) return NOT_GIT_REPO;
+    const hash = params.hash as string;
+    const filePath = params.filePath as string;
+    await gitService.checkoutFileFromCommit(hash, filePath);
+    messageRouter.broadcastEvent("gitStateChanged", { scope: "all" });
+    return { success: true };
+  });
+
   messageRouter.handle("resetToCommit", async (params) => {
     if (!gitService) return NOT_GIT_REPO;
     const hash = params.hash as string;

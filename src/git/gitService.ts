@@ -491,6 +491,17 @@ export class GitService {
     this.invalidateCache();
   }
 
+  async checkoutFileFromCommit(hash: string, filePath: string): Promise<void> {
+    await this.execGit(["checkout", hash, "--", filePath]);
+    this.invalidateCache();
+  }
+
+  async checkoutFileFromParent(hash: string, filePath: string): Promise<void> {
+    // Revert a file to its state before this commit (parent)
+    await this.execGit(["checkout", `${hash}~1`, "--", filePath]);
+    this.invalidateCache();
+  }
+
   async resetToCommit(
     hash: string,
     mode: "soft" | "mixed" | "hard",

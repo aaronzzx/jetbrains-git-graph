@@ -138,6 +138,42 @@ export function FileContextMenu({ x, y, file, onClose }: FileContextMenuProps) {
     }
   };
 
+  const handleRevertFileChanges = async () => {
+    onClose();
+    if (!selectedCommitHash) return;
+    const result = (await bridge.request("showConfirmMessage", {
+      message: `Revert changes to '${filePath.split("/").pop()}' from this commit?`,
+      confirmLabel: "Revert",
+    })) as { confirmed: boolean };
+    if (!result.confirmed) return;
+    try {
+      await bridge.request("revertFileChanges", {
+        hash: selectedCommitHash,
+        filePath,
+      });
+    } catch (err) {
+      console.error("Revert file changes failed:", err);
+    }
+  };
+
+  const handleCherryPickFileChanges = async () => {
+    onClose();
+    if (!selectedCommitHash) return;
+    const result = (await bridge.request("showConfirmMessage", {
+      message: `Apply changes to '${filePath.split("/").pop()}' from this commit to working tree?`,
+      confirmLabel: "Apply",
+    })) as { confirmed: boolean };
+    if (!result.confirmed) return;
+    try {
+      await bridge.request("cherryPickFileChanges", {
+        hash: selectedCommitHash,
+        filePath,
+      });
+    } catch (err) {
+      console.error("Cherry-pick file changes failed:", err);
+    }
+  };
+
   const items: {
     label: string;
     action: () => void;
@@ -147,6 +183,12 @@ export function FileContextMenu({ x, y, file, onClose }: FileContextMenuProps) {
     { label: "", action: () => {}, separator: true },
     { label: "Edit Source", action: handleEditSource },
     { label: "Open Repository Version", action: handleOpenRepoVersion },
+    { label: "", action: () => {}, separator: true },
+    { label: "Revert Selected Changes", action: handleRevertFileChanges },
+    {
+      label: "Cherry-Pick Selected Changes",
+      action: handleCherryPickFileChanges,
+    },
     { label: "", action: () => {}, separator: true },
     { label: "Copy Path", action: handleCopyPath },
     { label: "Copy File Name", action: handleCopyFileName },
