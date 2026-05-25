@@ -15,6 +15,7 @@ interface PanelFilter {
   branch: string;
   author: string;
   dateRange: string;
+  file: string;
 }
 
 interface PanelStore {
@@ -198,7 +199,7 @@ export const usePanelStore = create<PanelStore>((set, get) => ({
   selectedBranches: [],
   lastSelectedBranch: null,
 
-  filter: { searchQuery: "", branch: "", author: "", dateRange: "" },
+  filter: { searchQuery: "", branch: "", author: "", dateRange: "", file: "" },
   pendingSelectionFromFilter: [],
   collapsedSequenceIds: new Set(),
   collapsedIntermediates: new Map(),
@@ -214,6 +215,7 @@ export const usePanelStore = create<PanelStore>((set, get) => ({
         bridge.request("getGraphData", {
           maxCount: 200,
           branch: filter.branch || undefined,
+          file: filter.file || undefined,
         }) as Promise<{
           graphData: { commits: Commit[]; lanes: Record<string, LaneInfo> };
           snapshot: LaneSnapshot;
@@ -446,8 +448,11 @@ export const usePanelStore = create<PanelStore>((set, get) => ({
     const { filter: current, selectedCommitHashes, commits } = get();
     const next = { ...current, ...partial };
 
-    // Branch filter changes require a backend re-fetch
-    if (partial.branch !== undefined && partial.branch !== current.branch) {
+    // Branch or file filter changes require a backend re-fetch
+    if (
+      (partial.branch !== undefined && partial.branch !== current.branch) ||
+      (partial.file !== undefined && partial.file !== current.file)
+    ) {
       set({
         filter: next,
         pendingSelectionFromFilter: [],

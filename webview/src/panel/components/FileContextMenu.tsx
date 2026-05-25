@@ -290,6 +290,11 @@ export function FileContextMenu({ x, y, file, onClose }: FileContextMenuProps) {
     }
   };
 
+  const handleHistoryUpToHere = () => {
+    onClose();
+    usePanelStore.getState().setFilter({ file: filePath });
+  };
+
   const items: {
     label: string;
     action: () => void;
@@ -314,6 +319,8 @@ export function FileContextMenu({ x, y, file, onClose }: FileContextMenuProps) {
     { label: "", action: () => {}, separator: true },
     { label: "Copy Path", action: handleCopyPath, icon: <IconCopy /> },
     { label: "Copy File Name", action: handleCopyFileName, icon: <IconCopy /> },
+    { label: "", action: () => {}, separator: true },
+    { label: "History Up to Here", action: handleHistoryUpToHere },
   ];
 
   const menu = (

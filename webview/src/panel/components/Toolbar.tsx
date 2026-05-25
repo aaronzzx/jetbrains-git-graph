@@ -212,6 +212,17 @@ export function Toolbar() {
           </FilterDropdown>
         )}
       </div>
+
+      {/* File filter indicator */}
+      {filter.file && (
+        <FilterButton
+          label="File"
+          active={true}
+          activeValue={filter.file.split("/").pop()}
+          onClick={() => setFilter({ file: "" })}
+          onClear={() => setFilter({ file: "" })}
+        />
+      )}
     </div>
   );
 }

@@ -146,6 +146,7 @@ export function activate(context: vscode.ExtensionContext) {
       branch: params.branch as string | undefined,
       search: params.search as string | undefined,
       author: params.author as string | undefined,
+      file: params.file as string | undefined,
     };
     const snapshot = params.snapshot as LaneSnapshot | undefined;
     const result = await gitService.getGraphTopology(options, snapshot);
