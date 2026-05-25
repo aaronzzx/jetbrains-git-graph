@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import MdiChevronDown from "~icons/mdi/chevron-down";
 import MdiChevronRight from "~icons/mdi/chevron-right";
 import MdiFolder from "~icons/mdi/folder";
@@ -699,9 +699,7 @@ function BranchContextMenu({
 
   const handleDelete = async () => {
     onClose();
-    const confirmed = confirm(
-      `Delete branch '${branch.name}'?`,
-    );
+    const confirmed = confirm(`Delete branch '${branch.name}'?`);
     if (!confirmed) return;
     try {
       await bridge.request("deleteBranch", {
@@ -709,7 +707,7 @@ function BranchContextMenu({
         isRemote: branch.isRemote,
         force: false,
       });
-    } catch (err) {
+    } catch (_err) {
       // If normal delete fails (unmerged), ask for force delete
       const forceConfirmed = confirm(
         `Branch '${branch.name}' is not fully merged. Force delete?`,
@@ -801,7 +799,12 @@ function BranchContextMenu({
     }
   };
 
-  const items: { label: string; action: () => void; disabled?: boolean; separator?: boolean }[] = [];
+  const items: {
+    label: string;
+    action: () => void;
+    disabled?: boolean;
+    separator?: boolean;
+  }[] = [];
 
   if (!isCurrent) {
     items.push({ label: "Checkout", action: handleCheckout });
