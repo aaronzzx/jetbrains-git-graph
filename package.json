@@ -1,5 +1,5 @@
 {
-  "name": "idea-like-git",
+  "name": "idea-like-git-graph",
   "displayName": "IDEA-Like Git - Graph & Context Menu",
   "publisher": "autemj",
   "description": "IntelliJ-style Git graph, branch operations, cherry-pick, rebase, and 3-way merge editor for VS Code",
