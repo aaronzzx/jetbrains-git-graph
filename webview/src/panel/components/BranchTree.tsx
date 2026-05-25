@@ -755,6 +755,19 @@ function BranchContextMenu({
     }
   };
 
+  const handleRebase = async () => {
+    onClose();
+    const confirmed = confirm(
+      `Rebase '${currentBranch}' onto '${branch.name}'?`,
+    );
+    if (!confirmed) return;
+    try {
+      await bridge.request("rebaseBranch", { onto: branch.name });
+    } catch (err) {
+      console.error("Rebase failed:", err);
+    }
+  };
+
   const items: { label: string; action: () => void; disabled?: boolean; separator?: boolean }[] = [];
 
   if (!isCurrent) {
@@ -767,6 +780,10 @@ function BranchContextMenu({
 
   if (!isCurrent) {
     items.push({ label: "", action: () => {}, separator: true });
+    items.push({
+      label: `Rebase '${currentBranch}' onto '${branch.name}'`,
+      action: handleRebase,
+    });
     items.push({
       label: `Merge '${branch.name}' into '${currentBranch}'`,
       action: handleMerge,

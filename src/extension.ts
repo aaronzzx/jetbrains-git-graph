@@ -357,6 +357,14 @@ export function activate(context: vscode.ExtensionContext) {
     return { success: true };
   });
 
+  messageRouter.handle("rebaseBranch", async (params) => {
+    if (!gitService) return NOT_GIT_REPO;
+    const onto = params.onto as string;
+    await gitService.rebase(onto);
+    messageRouter.broadcastEvent("gitStateChanged", { scope: "all" });
+    return { success: true };
+  });
+
   // 7. GitWatcher (only if GitService is available)
   if (gitService && workspaceRoot) {
     const watcher = new GitWatcher(

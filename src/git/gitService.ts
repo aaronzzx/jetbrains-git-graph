@@ -448,6 +448,11 @@ export class GitService {
     this.invalidateCache();
   }
 
+  async rebase(onto: string): Promise<void> {
+    await this.execGit(["rebase", onto]);
+    this.invalidateCache();
+  }
+
   invalidateCache(pattern?: string): void {
     this.cache.invalidate(pattern);
   }
