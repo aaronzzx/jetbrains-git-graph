@@ -147,6 +147,7 @@ export function BranchTree() {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [currentBranchRowSelected, setCurrentBranchRowSelected] =
     useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Context menu state
   const [contextMenu, setContextMenu] = useState<{
@@ -173,15 +174,29 @@ export function BranchTree() {
     setCollapsed((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const localBranches = branches.filter((b) => !b.isRemote);
-  const remoteBranches = branches.filter((b) => b.isRemote);
+  const localBranches = branches.filter(
+    (b) =>
+      !b.isRemote &&
+      (!searchQuery ||
+        b.name.toLowerCase().includes(searchQuery.toLowerCase())),
+  );
+  const remoteBranches = branches.filter(
+    (b) =>
+      b.isRemote &&
+      (!searchQuery ||
+        b.name.toLowerCase().includes(searchQuery.toLowerCase())),
+  );
 
   const headBranch = localBranches.find((b) => b.isCurrent);
   const headCommit = commits.find((c) => c.refs.some((r) => r.type === "HEAD"));
 
   const localTree = branchesToTree(localBranches);
   const remoteTree = branchesToTree(remoteBranches);
-  const tagTree = tagsToTree(tags);
+  const filteredTags = tags.filter(
+    (t) =>
+      !searchQuery || t.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+  const tagTree = tagsToTree(filteredTags);
 
   const allVisibleBranches: string[] = [
     ...(!collapsed.local
@@ -217,17 +232,32 @@ export function BranchTree() {
         padding: "4px 0",
       }}
     >
-      <div
-        style={{
-          padding: "0 8px",
-          fontWeight: 600,
-          opacity: 0.6,
-          fontSize: "0.8em",
-          textTransform: "uppercase",
-          marginBottom: 4,
-        }}
-      >
-        Branches
+      <div style={{ padding: "4px 8px" }}>
+        <input
+          type="text"
+          placeholder="Branch or tag"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "4px 8px",
+            fontSize: "12px",
+            border: "1px solid var(--vscode-input-border, #3c3c3c)",
+            background: "var(--vscode-input-background, #1e1e1e)",
+            color: "var(--vscode-input-foreground, #ccc)",
+            borderRadius: 3,
+            outline: "none",
+            boxSizing: "border-box",
+          }}
+          onFocus={(e) => {
+            (e.target as HTMLElement).style.borderColor =
+              "var(--vscode-focusBorder, #007fd4)";
+          }}
+          onBlur={(e) => {
+            (e.target as HTMLElement).style.borderColor =
+              "var(--vscode-input-border, #3c3c3c)";
+          }}
+        />
       </div>
 
       {/* HEAD – unified "Current Branch" entry */}
