@@ -28,7 +28,7 @@ import IconVue from "~icons/vscode-icons/file-type-vue";
 import IconXml from "~icons/vscode-icons/file-type-xml";
 import IconYaml from "~icons/vscode-icons/file-type-yaml";
 
-// --- Folder icons (stroke-based, IDEA style) ---
+// --- Folder icons (IntelliJ IDEA style) ---
 export function IconFolder({ style }: { style?: React.CSSProperties }) {
   return (
     <svg
@@ -36,12 +36,15 @@ export function IconFolder({ style }: { style?: React.CSSProperties }) {
       height="16"
       viewBox="0 0 16 16"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1"
-      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
       style={{ verticalAlign: "middle", color: "#8c8c8c", ...style }}
     >
-      <path d="M2 4v8h12V5.5H8L6.5 4z" />
+      <path
+        d="M8.10584 4.34613L8.25344 4.5H8.46667H13C13.8284 4.5 14.5 5.17157 14.5 6V12.1333C14.5 12.9529 13.932 13.5 13.3667 13.5H2.63333C2.06804 13.5 1.5 12.9529 1.5 12.1333V3.86667C1.5 3.04707 2.06804 2.5 2.63333 2.5H6.1217C6.25792 2.5 6.38824 2.55557 6.48253 2.65387L8.10584 4.34613Z"
+        fill="currentColor"
+        fillOpacity={0.15}
+        stroke="currentColor"
+      />
     </svg>
   );
 }
@@ -53,13 +56,15 @@ export function IconFolderOpen({ style }: { style?: React.CSSProperties }) {
       height="16"
       viewBox="0 0 16 16"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1"
-      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
       style={{ verticalAlign: "middle", color: "#8c8c8c", ...style }}
     >
-      <path d="M2 4v8h12V5.5H8L6.5 4z" />
-      <path d="M2 7l1.5-1h11L13 12H3z" />
+      <path
+        d="M8.10584 4.34613L8.25344 4.5H8.46667H13C13.8284 4.5 14.5 5.17157 14.5 6V12.1333C14.5 12.9529 13.932 13.5 13.3667 13.5H2.63333C2.06804 13.5 1.5 12.9529 1.5 12.1333V3.86667C1.5 3.04707 2.06804 2.5 2.63333 2.5H6.1217C6.25792 2.5 6.38824 2.55557 6.48253 2.65387L8.10584 4.34613Z"
+        fill="currentColor"
+        fillOpacity={0.15}
+        stroke="currentColor"
+      />
     </svg>
   );
 }

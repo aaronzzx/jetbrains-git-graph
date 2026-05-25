@@ -4,19 +4,24 @@ import { bridge } from "../../shared/bridge";
 import { usePanelStore } from "../../shared/store/panel-store";
 import type { DiffFile } from "../../shared/types/git";
 
-// Inline SVG icons for menu items
+// Inline SVG icons for menu items (IntelliJ IDEA style)
 function IconDiff() {
   return (
     <svg
-      width="14"
-      height="14"
+      width="16"
+      height="16"
       viewBox="0 0 16 16"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M3 8h4M5 6v4" />
-      <path d="M9 8h4" />
+      <path
+        d="M6.36812 4.9736C6.62969 4.77016 6.67681 4.39319 6.47337 4.13163C6.26992 3.87006 5.89296 3.82294 5.63139 4.02638L0.522461 7.99999L5.63139 11.9736C5.89296 12.177 6.26992 12.1299 6.47337 11.8684C6.67681 11.6068 6.62969 11.2298 6.36812 11.0264L2.47705 7.99999L6.36812 4.9736Z"
+        fill="currentColor"
+      />
+      <path
+        d="M9.63139 4.9736C9.36983 4.77016 9.3227 4.39319 9.52615 4.13163C9.72959 3.87006 10.1066 3.82294 10.3681 4.02638L15.4771 7.99999L10.3681 11.9736C10.1066 12.177 9.72959 12.1299 9.52615 11.8684C9.3227 11.6068 9.36983 11.2298 9.63139 11.0264L13.5225 7.99999L9.63139 4.9736Z"
+        fill="currentColor"
+      />
     </svg>
   );
 }
@@ -24,15 +29,17 @@ function IconDiff() {
 function IconEdit() {
   return (
     <svg
-      width="14"
-      height="14"
+      width="16"
+      height="16"
       viewBox="0 0 16 16"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M11.5 2.5l2 2-8 8H3.5v-2z" strokeLinejoin="round" />
-      <path d="M9.5 4.5l2 2" />
+      <path
+        d="M11.5973 7.65471L13.6882 5.56049C14.1053 5.15406 14.1003 4.49602 13.6948 4.08627L12.0267 2.3136L12.0224 2.30932C11.6123 1.90004 10.942 1.89327 10.5331 2.31079L8.3867 4.44406M11.5973 7.65471L8.3867 4.44406M11.5973 7.65471L5.74041 13.5H2.50036L2.5 10.32L8.3867 4.44406"
+        stroke="currentColor"
+        strokeMiterlimit="10"
+      />
     </svg>
   );
 }
@@ -40,15 +47,18 @@ function IconEdit() {
 function IconRevert() {
   return (
     <svg
-      width="14"
-      height="14"
+      width="16"
+      height="16"
       viewBox="0 0 16 16"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M4 7l-2 2 2 2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M2 9h8a3 3 0 000-6H7" strokeLinecap="round" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M5.85363 1.85355C6.04889 1.65829 6.04889 1.34171 5.85363 1.14645C5.65837 0.951184 5.34178 0.951184 5.14652 1.14645L1.64652 4.64645L1.29297 5L1.64652 5.35355L5.14652 8.85355C5.34178 9.04882 5.65837 9.04882 5.85363 8.85355C6.04889 8.65829 6.04889 8.34171 5.85363 8.14645L3.20718 5.5H10.5001C12.4331 5.5 14.0001 7.067 14.0001 9C14.0001 10.933 12.4331 12.5 10.5001 12.5H5.50008C5.22393 12.5 5.00008 12.7239 5.00008 13C5.00008 13.2761 5.22393 13.5 5.50008 13.5H10.5001C12.9854 13.5 15.0001 11.4853 15.0001 9C15.0001 6.51472 12.9854 4.5 10.5001 4.5H3.20718L5.85363 1.85355Z"
+        fill="currentColor"
+      />
     </svg>
   );
 }
@@ -56,16 +66,24 @@ function IconRevert() {
 function IconCherryPick() {
   return (
     <svg
-      width="14"
-      height="14"
+      width="16"
+      height="16"
       viewBox="0 0 16 16"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="8" cy="5" r="2.5" />
-      <path d="M8 7.5v5" />
-      <path d="M6 10.5c1 1 3 1 4 0" strokeLinecap="round" />
+      <circle cx="4.5" cy="4" r="2" stroke="currentColor" />
+      <path
+        d="M4.5 11.5H8.5C9.60457 11.5 10.5 10.6046 10.5 9.5V9.5V8"
+        stroke="currentColor"
+      />
+      <path
+        d="M4.5 6.5L4.5 14.5"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="10.5" cy="6" r="2" stroke="currentColor" />
     </svg>
   );
 }
@@ -73,15 +91,29 @@ function IconCherryPick() {
 function IconCopy() {
   return (
     <svg
-      width="14"
-      height="14"
+      width="16"
+      height="16"
       viewBox="0 0 16 16"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <rect x="5" y="5" width="8" height="8" rx="1" />
-      <path d="M3 11V3h8" strokeLinecap="round" strokeLinejoin="round" />
+      <rect
+        x="2.5"
+        y="3.5"
+        width="9"
+        height="10"
+        rx="1.5"
+        stroke="currentColor"
+      />
+      <rect x="5" y="6" width="4" height="1" rx="0.5" fill="currentColor" />
+      <rect x="5" y="8" width="4" height="1" rx="0.5" fill="currentColor" />
+      <rect x="5" y="10" width="4" height="1" rx="0.5" fill="currentColor" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M11.0017 2H11.5998C12.373 2 12.9998 2.6268 12.9998 3.4V3.91081C13.0011 3.94038 13.0017 3.97011 13.0017 4V11.5482C13.6063 11.1124 13.9998 10.4021 13.9998 9.6V3.4C13.9998 2.07452 12.9253 1 11.5998 1H6.39978C5.59677 1 4.88587 1.39437 4.4502 2H6.39978H11.0017Z"
+        fill="currentColor"
+      />
     </svg>
   );
 }
