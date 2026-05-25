@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { bridge } from "../../shared/bridge";
+import { bridge, bridgeWithProgress } from "../../shared/bridge";
 import { usePanelStore } from "../../shared/store/panel-store";
 import type { Commit } from "../../shared/types/git";
 
@@ -185,7 +185,7 @@ export function CommitContextMenu({
   const handleCherryPick = async () => {
     onClose();
     try {
-      await bridge.request("cherryPick", { hash: commit.hash });
+      await bridgeWithProgress("cherryPick", { hash: commit.hash });
     } catch (err) {
       console.error("Cherry-pick failed:", err);
     }
@@ -194,7 +194,7 @@ export function CommitContextMenu({
   const handleCheckoutRevision = async () => {
     onClose();
     try {
-      await bridge.request("checkoutCommit", { hash: commit.hash });
+      await bridgeWithProgress("checkoutCommit", { hash: commit.hash });
     } catch (err) {
       console.error("Checkout revision failed:", err);
     }
@@ -208,7 +208,7 @@ export function CommitContextMenu({
     })) as { confirmed: boolean };
     if (!result.confirmed) return;
     try {
-      await bridge.request("resetToCommit", {
+      await bridgeWithProgress("resetToCommit", {
         hash: commit.hash,
         mode: "hard",
       });
@@ -220,7 +220,7 @@ export function CommitContextMenu({
   const handleResetMixed = async () => {
     onClose();
     try {
-      await bridge.request("resetToCommit", {
+      await bridgeWithProgress("resetToCommit", {
         hash: commit.hash,
         mode: "mixed",
       });
@@ -232,7 +232,7 @@ export function CommitContextMenu({
   const handleResetSoft = async () => {
     onClose();
     try {
-      await bridge.request("resetToCommit", {
+      await bridgeWithProgress("resetToCommit", {
         hash: commit.hash,
         mode: "soft",
       });
@@ -244,7 +244,7 @@ export function CommitContextMenu({
   const handleRevert = async () => {
     onClose();
     try {
-      await bridge.request("revertCommit", { hash: commit.hash });
+      await bridgeWithProgress("revertCommit", { hash: commit.hash });
     } catch (err) {
       console.error("Revert failed:", err);
     }

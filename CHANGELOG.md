@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.5] - 2025-05-25
+
+### Fixed
+- Progress bar now shows immediately when clicking git operations (checkout, push, pull, merge, rebase, cherry-pick, reset, revert, delete) instead of waiting for server response
+
 ## [0.2.4] - 2025-05-25
 
 ### Added

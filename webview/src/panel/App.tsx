@@ -1,7 +1,6 @@
 import { Allotment } from "allotment";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "allotment/dist/style.css";
-import { bridge } from "../shared/bridge";
 import { usePreventSelect } from "../shared/hooks/usePreventSelect";
 import { usePanelStore } from "../shared/store/panel-store";
 import { BranchTree } from "./components/BranchTree";
@@ -45,25 +44,14 @@ function ProgressBar({ visible }: { visible: boolean }) {
 export function PanelApp() {
   const loading = usePanelStore((s) => s.loading);
   const commits = usePanelStore((s) => s.commits);
+  const operationInProgress = usePanelStore((s) => s.operationInProgress);
   const fetchInitialData = usePanelStore((s) => s.fetchInitialData);
-  const [operationInProgress, setOperationInProgress] = useState(false);
 
   const middleRef = usePreventSelect();
 
   useEffect(() => {
     fetchInitialData();
   }, [fetchInitialData]);
-
-  // Listen for operation progress events
-  useEffect(() => {
-    return bridge.onEvent((event) => {
-      if (event === "operationStart") {
-        setOperationInProgress(true);
-      } else if (event === "operationEnd") {
-        setOperationInProgress(false);
-      }
-    });
-  }, []);
 
   if (loading && commits.length === 0) {
     return (

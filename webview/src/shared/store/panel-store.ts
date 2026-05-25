@@ -50,6 +50,7 @@ interface PanelStore {
 
   loading: boolean;
   hasMore: boolean;
+  operationInProgress: boolean;
 
   fetchInitialData: () => Promise<void>;
   loadMore: () => Promise<void>;
@@ -206,6 +207,7 @@ export const usePanelStore = create<PanelStore>((set, get) => ({
 
   loading: false,
   hasMore: true,
+  operationInProgress: false,
 
   async fetchInitialData() {
     set({ loading: true });
@@ -599,5 +601,11 @@ bridge.onEvent((event, data) => {
   if (event === "showFileHistory") {
     const { file } = data as { file: string };
     usePanelStore.getState().setFilter({ file });
+  }
+  if (event === "operationStart") {
+    usePanelStore.setState({ operationInProgress: true });
+  }
+  if (event === "operationEnd") {
+    usePanelStore.setState({ operationInProgress: false });
   }
 });

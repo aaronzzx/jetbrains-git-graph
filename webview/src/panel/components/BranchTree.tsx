@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { bridge } from "../../shared/bridge";
+import { bridge, bridgeWithProgress } from "../../shared/bridge";
 import { useModifierClickSelection } from "../../shared/hooks/useModifierClickSelection";
 import { usePreventSelect } from "../../shared/hooks/usePreventSelect";
 import { usePanelStore } from "../../shared/store/panel-store";
@@ -931,7 +931,7 @@ function BranchContextMenu({
   const handleCheckout = async () => {
     onClose();
     try {
-      await bridge.request("checkoutBranch", { branchName: branch.name });
+      await bridgeWithProgress("checkoutBranch", { branchName: branch.name });
     } catch (err) {
       console.error("Checkout failed:", err);
     }
@@ -962,7 +962,7 @@ function BranchContextMenu({
     })) as { confirmed: boolean };
     if (!result.confirmed) return;
     try {
-      await bridge.request("deleteBranch", {
+      await bridgeWithProgress("deleteBranch", {
         branchName: branch.name,
         isRemote: branch.isRemote,
         force: false,
@@ -975,7 +975,7 @@ function BranchContextMenu({
       })) as { confirmed: boolean };
       if (forceResult.confirmed) {
         try {
-          await bridge.request("deleteBranch", {
+          await bridgeWithProgress("deleteBranch", {
             branchName: branch.name,
             isRemote: branch.isRemote,
             force: true,
@@ -1012,7 +1012,7 @@ function BranchContextMenu({
   const handlePush = async () => {
     onClose();
     try {
-      await bridge.request("pushBranch", {
+      await bridgeWithProgress("pushBranch", {
         branchName: branch.name,
         force: false,
       });
@@ -1024,7 +1024,7 @@ function BranchContextMenu({
   const handleUpdate = async () => {
     onClose();
     try {
-      await bridge.request("pullBranch", { branchName: branch.name });
+      await bridgeWithProgress("pullBranch", { branchName: branch.name });
     } catch (err) {
       console.error("Update failed:", err);
     }
@@ -1038,7 +1038,7 @@ function BranchContextMenu({
     })) as { confirmed: boolean };
     if (!result.confirmed) return;
     try {
-      await bridge.request("mergeBranch", { branchName: branch.name });
+      await bridgeWithProgress("mergeBranch", { branchName: branch.name });
     } catch (err) {
       console.error("Merge failed:", err);
     }
@@ -1052,7 +1052,7 @@ function BranchContextMenu({
     })) as { confirmed: boolean };
     if (!result.confirmed) return;
     try {
-      await bridge.request("rebaseBranch", { onto: branch.name });
+      await bridgeWithProgress("rebaseBranch", { onto: branch.name });
     } catch (err) {
       console.error("Rebase failed:", err);
     }
@@ -1061,7 +1061,7 @@ function BranchContextMenu({
   const handleCheckoutAndRebase = async () => {
     onClose();
     try {
-      await bridge.request("checkoutAndRebase", {
+      await bridgeWithProgress("checkoutAndRebase", {
         branchToCheckout: branch.name,
         rebaseOnto: currentBranch,
       });

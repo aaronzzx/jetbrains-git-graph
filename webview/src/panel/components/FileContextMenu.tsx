@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { bridge } from "../../shared/bridge";
+import { bridge, bridgeWithProgress } from "../../shared/bridge";
 import { usePanelStore } from "../../shared/store/panel-store";
 import type { DiffFile } from "../../shared/types/git";
 
@@ -263,7 +263,7 @@ export function FileContextMenu({ x, y, file, onClose }: FileContextMenuProps) {
     })) as { confirmed: boolean };
     if (!result.confirmed) return;
     try {
-      await bridge.request("revertFileChanges", {
+      await bridgeWithProgress("revertFileChanges", {
         hash: selectedCommitHash,
         filePath,
       });
@@ -281,7 +281,7 @@ export function FileContextMenu({ x, y, file, onClose }: FileContextMenuProps) {
     })) as { confirmed: boolean };
     if (!result.confirmed) return;
     try {
-      await bridge.request("cherryPickFileChanges", {
+      await bridgeWithProgress("cherryPickFileChanges", {
         hash: selectedCommitHash,
         filePath,
       });
