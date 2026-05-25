@@ -754,6 +754,15 @@ function BranchContextMenu({
     }
   };
 
+  const handleUpdate = async () => {
+    onClose();
+    try {
+      await bridge.request("pullBranch", { branchName: branch.name });
+    } catch (err) {
+      console.error("Update failed:", err);
+    }
+  };
+
   const handleMerge = async () => {
     onClose();
     const confirmed = confirm(
@@ -830,6 +839,7 @@ function BranchContextMenu({
 
   if (!branch.isRemote) {
     items.push({ label: "", action: () => {}, separator: true });
+    items.push({ label: "Update", action: handleUpdate });
     items.push({ label: "Push...", action: handlePush });
   }
 

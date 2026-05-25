@@ -470,6 +470,20 @@ export class GitService {
     this.invalidateCache();
   }
 
+  async pull(branchName?: string): Promise<void> {
+    const args = ["pull"];
+    if (branchName) {
+      args.push("origin", branchName);
+    }
+    await this.execGit(args);
+    this.invalidateCache();
+  }
+
+  async fetch(remote = "origin"): Promise<void> {
+    await this.execGit(["fetch", remote]);
+    this.invalidateCache();
+  }
+
   invalidateCache(pattern?: string): void {
     this.cache.invalidate(pattern);
   }
