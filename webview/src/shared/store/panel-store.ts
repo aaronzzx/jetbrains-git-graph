@@ -14,6 +14,7 @@ interface PanelFilter {
   searchQuery: string;
   branch: string;
   author: string;
+  dateRange: string;
 }
 
 interface PanelStore {
@@ -87,6 +88,21 @@ function filterCommits(
     for (const h of hashes) hiddenSet.add(h);
   }
 
+  // Compute date cutoff for dateRange filter
+  let dateCutoff: Date | null = null;
+  if (filter.dateRange) {
+    const now = new Date();
+    if (filter.dateRange === "today") {
+      dateCutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    } else if (filter.dateRange === "7days") {
+      dateCutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    } else if (filter.dateRange === "30days") {
+      dateCutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    } else if (filter.dateRange === "90days") {
+      dateCutoff = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+    }
+  }
+
   return commits.filter((c) => {
     if (hiddenSet.has(c.hash)) return false;
 
@@ -101,6 +117,12 @@ function filterCommits(
     }
     if (filter.author) {
       if (!c.authorName.toLowerCase().includes(filter.author.toLowerCase())) {
+        return false;
+      }
+    }
+    if (dateCutoff) {
+      const commitDate = new Date(c.authorDate);
+      if (commitDate < dateCutoff) {
         return false;
       }
     }
@@ -176,7 +198,7 @@ export const usePanelStore = create<PanelStore>((set, get) => ({
   selectedBranches: [],
   lastSelectedBranch: null,
 
-  filter: { searchQuery: "", branch: "", author: "" },
+  filter: { searchQuery: "", branch: "", author: "", dateRange: "" },
   pendingSelectionFromFilter: [],
   collapsedSequenceIds: new Set(),
   collapsedIntermediates: new Map(),
@@ -437,8 +459,12 @@ export const usePanelStore = create<PanelStore>((set, get) => ({
     }
 
     // Search/author filter: client-side only
-    const wasFiltered = !!(current.searchQuery || current.author);
-    const isNowFiltered = !!(next.searchQuery || next.author);
+    const wasFiltered = !!(
+      current.searchQuery ||
+      current.author ||
+      current.dateRange
+    );
+    const isNowFiltered = !!(next.searchQuery || next.author || next.dateRange);
     const visible = filterCommits(commits, next, get().collapsedIntermediates);
 
     if (wasFiltered && !isNowFiltered) {
