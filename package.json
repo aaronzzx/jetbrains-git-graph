@@ -2,8 +2,8 @@
   "name": "idea-like-git-graph",
   "displayName": "IntelliJ Git Graph - IDEA Style Branch & Merge",
   "publisher": "autemj",
-  "description": "IntelliJ-style Git graph, branch operations, cherry-pick, rebase, and 3-way merge editor for VS Code",
-  "version": "0.1.5",
+  "description": "IntelliJ IDEA style Git graph visualization with branch context menu, cherry-pick, rebase, merge, reset, and 3-way merge editor. JetBrains-like Git experience for VS Code.",
+  "version": "0.1.6",
   "license": "MIT",
   "icon": "images/icon.png",
   "repository": {
@@ -14,7 +14,24 @@
     "vscode": "^1.85.0"
   },
   "categories": [
-    "SCM Providers"
+    "SCM Providers",
+    "Other"
+  ],
+  "keywords": [
+    "git",
+    "graph",
+    "intellij",
+    "idea",
+    "jetbrains",
+    "branch",
+    "merge",
+    "cherry-pick",
+    "rebase",
+    "git log",
+    "git graph",
+    "context menu",
+    "diff",
+    "3-way merge"
   ],
   "main": "./dist/extension.js",
   "contributes": {
