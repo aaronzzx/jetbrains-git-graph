@@ -683,11 +683,29 @@ function BranchContextMenu({
     }
   };
 
+  const handleNewBranch = async () => {
+    onClose();
+    const newName = prompt(`New branch name (from '${branch.name}'):`);
+    if (!newName || !newName.trim()) return;
+    try {
+      await bridge.request("createBranch", {
+        newBranchName: newName.trim(),
+        startPoint: branch.name,
+      });
+    } catch (err) {
+      console.error("Create branch failed:", err);
+    }
+  };
+
   const items: { label: string; action: () => void; disabled?: boolean; separator?: boolean }[] = [];
 
   if (!isCurrent) {
     items.push({ label: "Checkout", action: handleCheckout });
   }
+  items.push({
+    label: `New Branch from '${branch.name}'...`,
+    action: handleNewBranch,
+  });
 
   if (items.length === 0) return null;
 

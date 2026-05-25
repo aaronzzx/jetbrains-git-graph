@@ -415,6 +415,14 @@ export class GitService {
     this.invalidateCache();
   }
 
+  async createBranch(
+    newBranchName: string,
+    startPoint: string,
+  ): Promise<void> {
+    await this.execGit(["branch", newBranchName, startPoint]);
+    this.invalidateCache();
+  }
+
   invalidateCache(pattern?: string): void {
     this.cache.invalidate(pattern);
   }

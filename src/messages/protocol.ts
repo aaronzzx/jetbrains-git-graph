@@ -46,7 +46,8 @@ export type CommandType =
   | "confirmCancelMerge"
   | "closeMergeEditor"
   | "openFile"
-  | "checkoutBranch";
+  | "checkoutBranch"
+  | "createBranch";
 
 export type EventType =
   | "gitStateChanged"
