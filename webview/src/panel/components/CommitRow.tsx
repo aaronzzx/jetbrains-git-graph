@@ -2,7 +2,7 @@ import { usePreventSelect } from "../../shared/hooks/usePreventSelect";
 import { usePanelStore } from "../../shared/store/panel-store";
 import type { Commit, LaneInfo, RefInfo } from "../../shared/types/git";
 
-const ROW_HEIGHT = 28;
+export const ROW_HEIGHT = 28;
 
 const REF_COLORS: Record<string, { bg: string; fg: string }> = {
   branch: { bg: "#deefe3", fg: "#24663a" },
@@ -61,16 +61,23 @@ function buildRefDisplayItems(refs: RefInfo[]): Array<{
     });
 }
 
+export interface ColumnWidths {
+  author: number;
+  date: number;
+}
+
 export function CommitRow({
   commit,
   lane,
   graphWidth,
+  columnWidths,
   onCommitClick,
   onContextMenu,
 }: {
   commit: Commit;
   lane: LaneInfo | undefined;
   graphWidth: number;
+  columnWidths: ColumnWidths;
   onCommitClick: (event: React.MouseEvent, hash: string) => void;
   onContextMenu?: (event: React.MouseEvent, commit: Commit) => void;
 }) {
@@ -102,70 +109,74 @@ export function CommitRow({
         height: ROW_HEIGHT,
         paddingLeft: graphWidth,
         paddingRight: 8,
-        gap: 8,
         color: isSelected ? "var(--selected-fg)" : "inherit",
       }}
     >
+      {/* Subject + refs column (flex) */}
       <span
         style={{
           flex: 1,
           overflow: "hidden",
           textOverflow: "ellipsis",
           whiteSpace: "nowrap",
+          paddingRight: 8,
         }}
       >
         {commit.subject}
+        {refItems.length > 0 && (
+          <span style={{ display: "inline-flex", gap: 4, marginLeft: 8 }}>
+            {refItems.map((item) => {
+              const colors = REF_COLORS[item.type] ?? REF_COLORS.branch;
+              const displayLabel = truncateFromStart(item.label, 13);
+              return (
+                <span
+                  key={item.key}
+                  style={{
+                    padding: "0 6px",
+                    borderRadius: 3,
+                    display: "inline-block",
+                    fontSize: "0.8em",
+                    fontWeight: 500,
+                    lineHeight: "18px",
+                    background: colors.bg,
+                    color: colors.fg,
+                    border: "1px solid #00000022",
+                    whiteSpace: "nowrap",
+                    verticalAlign: "middle",
+                  }}
+                  title={item.label}
+                >
+                  {displayLabel}
+                </span>
+              );
+            })}
+          </span>
+        )}
       </span>
 
-      {refItems.length > 0 && (
-        <span style={{ display: "flex", gap: 4, flexShrink: 0 }}>
-          {refItems.map((item) => {
-            const colors = REF_COLORS[item.type] ?? REF_COLORS.branch;
-            const displayLabel = truncateFromStart(item.label, 13);
-            return (
-              <span
-                key={item.key}
-                style={{
-                  padding: "0 6px",
-                  borderRadius: 3,
-                  display: "inline-block",
-                  fontSize: "0.8em",
-                  fontWeight: 500,
-                  lineHeight: "18px",
-                  background: colors.bg,
-                  color: colors.fg,
-                  border: "1px solid #00000022",
-                  whiteSpace: "nowrap",
-                  verticalAlign: "middle",
-                }}
-                title={item.label}
-              >
-                {displayLabel}
-              </span>
-            );
-          })}
-        </span>
-      )}
-
+      {/* Author column */}
       <span
         style={{
           flexShrink: 0,
-          width: 80,
+          width: columnWidths.author,
           overflow: "hidden",
           textOverflow: "ellipsis",
           whiteSpace: "nowrap",
           opacity: 0.7,
+          paddingLeft: 8,
         }}
       >
         {commit.authorName}
       </span>
 
+      {/* Date column */}
       <span
         style={{
           flexShrink: 0,
+          width: columnWidths.date,
           textAlign: "right",
           opacity: 0.5,
-          width: 120,
+          paddingLeft: 8,
         }}
       >
         {formatDateTime(commit.authorDate)}
