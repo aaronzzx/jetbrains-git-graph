@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.4] - 2025-05-25
+
+### Added
+- Auto-maximize editor when opening Diff viewer (same as Merge editor)
+
+## [0.2.3] - 2025-05-25
+
+### Added
+- Auto-maximize editor when opening 3-Way Merge Editor for full-screen experience
+
+## [0.2.2] - 2025-05-25
+
+### Added
+- IDEA-style blue progress bar during async git operations (checkout, push, pull, merge, rebase, cherry-pick, reset, revert)
+
 ## [0.2.1] - 2025-05-25
 
 ### Added
