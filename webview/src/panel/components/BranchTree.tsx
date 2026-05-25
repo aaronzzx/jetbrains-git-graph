@@ -697,6 +697,37 @@ function BranchContextMenu({
     }
   };
 
+  const handleDelete = async () => {
+    onClose();
+    const confirmed = confirm(
+      `Delete branch '${branch.name}'?`,
+    );
+    if (!confirmed) return;
+    try {
+      await bridge.request("deleteBranch", {
+        branchName: branch.name,
+        isRemote: branch.isRemote,
+        force: false,
+      });
+    } catch (err) {
+      // If normal delete fails (unmerged), ask for force delete
+      const forceConfirmed = confirm(
+        `Branch '${branch.name}' is not fully merged. Force delete?`,
+      );
+      if (forceConfirmed) {
+        try {
+          await bridge.request("deleteBranch", {
+            branchName: branch.name,
+            isRemote: branch.isRemote,
+            force: true,
+          });
+        } catch (err2) {
+          console.error("Force delete failed:", err2);
+        }
+      }
+    }
+  };
+
   const items: { label: string; action: () => void; disabled?: boolean; separator?: boolean }[] = [];
 
   if (!isCurrent) {
@@ -706,6 +737,11 @@ function BranchContextMenu({
     label: `New Branch from '${branch.name}'...`,
     action: handleNewBranch,
   });
+
+  if (!isCurrent) {
+    items.push({ label: "", action: () => {}, separator: true });
+    items.push({ label: "Delete", action: handleDelete });
+  }
 
   if (items.length === 0) return null;
 

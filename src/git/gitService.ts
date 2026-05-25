@@ -423,6 +423,21 @@ export class GitService {
     this.invalidateCache();
   }
 
+  async deleteBranch(branchName: string, force = false): Promise<void> {
+    const flag = force ? "-D" : "-d";
+    await this.execGit(["branch", flag, branchName]);
+    this.invalidateCache();
+  }
+
+  async deleteRemoteBranch(remoteBranch: string): Promise<void> {
+    // remoteBranch is like "origin/feature" → push --delete origin feature
+    const slashIdx = remoteBranch.indexOf("/");
+    const remote = remoteBranch.substring(0, slashIdx);
+    const branch = remoteBranch.substring(slashIdx + 1);
+    await this.execGit(["push", remote, "--delete", branch]);
+    this.invalidateCache();
+  }
+
   invalidateCache(pattern?: string): void {
     this.cache.invalidate(pattern);
   }
