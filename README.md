@@ -10,6 +10,8 @@ IntelliJ-style Git graph, branch operations, cherry-pick, rebase, and 3-way merg
 
 > Fork of [zhyc9de/jet-git](https://github.com/zhyc9de/jet-git) with full IntelliJ IDEA-style context menus and UI enhancements.
 
+**English** · [简体中文](./README.zh_CN.md)
+
 </div>
 
 ---
