@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.8] - 2025-05-25
+
+### Fixed
+- Progress bar shows for minimum 1 second, ensuring animation is always visible even for fast operations
+
 ## [0.2.7] - 2025-05-25
 
 ### Fixed
