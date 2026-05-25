@@ -241,18 +241,21 @@ export function BranchTree() {
           }}
         >
           <svg
-            width="14"
-            height="14"
+            width="12"
+            height="12"
             viewBox="0 0 16 16"
-            fill="currentColor"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.2"
             style={{
               position: "absolute",
-              left: 6,
+              left: 7,
               opacity: 0.5,
               pointerEvents: "none",
             }}
           >
-            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.156a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
+            <circle cx="7" cy="7" r="4.5" />
+            <line x1="10.5" y1="10.5" x2="14" y2="14" />
           </svg>
           <input
             type="text"
