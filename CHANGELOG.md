@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.7] - 2025-05-25
+
+### Fixed
+- Remove duplicate refresh button from panel title (keep VS Code's built-in one)
+
 ## [0.2.6] - 2025-05-25
 
 ### Fixed
