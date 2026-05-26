@@ -27,9 +27,20 @@ export class DiffEditorManager {
     this.diffIndex = -1;
   }
 
+  /** Set current index (when opening a specific file) */
+  setCurrentIndex(index: number): void {
+    this.diffIndex = index;
+  }
+
   /** Navigate to next file diff */
   async nextDiff(): Promise<boolean> {
-    if (this.diffFiles.length === 0) return false;
+    if (this.diffFiles.length === 0) {
+      void vscode.window.setStatusBarMessage(
+        "$(info) No file list available. Open a diff from Changed Files first.",
+        3000,
+      );
+      return false;
+    }
     this.diffIndex = Math.min(this.diffIndex + 1, this.diffFiles.length - 1);
     await this.openCurrentDiff();
     return true;
@@ -37,7 +48,13 @@ export class DiffEditorManager {
 
   /** Navigate to previous file diff */
   async prevDiff(): Promise<boolean> {
-    if (this.diffFiles.length === 0) return false;
+    if (this.diffFiles.length === 0) {
+      void vscode.window.setStatusBarMessage(
+        "$(info) No file list available. Open a diff from Changed Files first.",
+        3000,
+      );
+      return false;
+    }
     this.diffIndex = Math.max(this.diffIndex - 1, 0);
     await this.openCurrentDiff();
     return true;

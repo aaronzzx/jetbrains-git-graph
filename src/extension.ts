@@ -191,14 +191,7 @@ export function activate(context: vscode.ExtensionContext) {
           (f) => (f.newPath || f.oldPath) === filePath,
         );
         if (idx >= 0) {
-          diffManager.setDiffFileList(
-            fileList,
-            commit,
-            baseRef,
-            cherryPickHashes,
-          );
-          // Directly set the index
-          (diffManager as any).diffIndex = idx;
+          diffManager.setCurrentIndex(idx);
         }
       }
 

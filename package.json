@@ -182,13 +182,13 @@
         "command": "git-brains.nextDiff",
         "key": "f7",
         "mac": "f7",
-        "when": "isInDiffEditor"
+        "when": "editorFocus"
       },
       {
         "command": "git-brains.prevDiff",
         "key": "shift+f7",
         "mac": "shift+f7",
-        "when": "isInDiffEditor"
+        "when": "editorFocus"
       }
     ]
   },
