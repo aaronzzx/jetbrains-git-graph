@@ -1,3 +1,4 @@
+import * as nodefs from "node:fs/promises";
 import * as vscode from "vscode";
 import { GitService } from "./git/gitService";
 import type { DiffFile, LaneSnapshot } from "./git/types";
@@ -825,9 +826,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Try to find the patch file
     const patchFile = `${workspaceRoot}/.idea/shelf/${shelfName}/shelved.patch`;
     try {
-      const patchContent = await import("node:fs/promises").then((fs) =>
-        fs.readFile(patchFile, "utf-8"),
-      );
+      const patchContent = await nodefs.readFile(patchFile, "utf-8");
 
       // Extract the section for this specific file from the patch
       const filePatch = extractFilePatch(patchContent, filePath);
@@ -864,12 +863,8 @@ export function activate(context: vscode.ExtensionContext) {
     if (!saveUri) return { success: false };
 
     try {
-      const patchContent = await import("node:fs/promises").then((fs) =>
-        fs.readFile(patchFile, "utf-8"),
-      );
-      await import("node:fs/promises").then((fs) =>
-        fs.writeFile(saveUri.fsPath, patchContent, "utf-8"),
-      );
+      const patchContent = await nodefs.readFile(patchFile, "utf-8");
+      await nodefs.writeFile(saveUri.fsPath, patchContent, "utf-8");
       void vscode.window.showInformationMessage(
         `Patch saved to ${saveUri.fsPath}`,
       );
@@ -887,9 +882,7 @@ export function activate(context: vscode.ExtensionContext) {
     const patchFile = `${workspaceRoot}/.idea/shelf/${shelfName}/shelved.patch`;
 
     try {
-      const patchContent = await import("node:fs/promises").then((fs) =>
-        fs.readFile(patchFile, "utf-8"),
-      );
+      const patchContent = await nodefs.readFile(patchFile, "utf-8");
       await vscode.env.clipboard.writeText(patchContent);
       void vscode.window.showInformationMessage("Patch copied to clipboard");
       return { success: true };
@@ -914,9 +907,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     try {
       for (const uri of fileUris) {
-        const patchContent = await import("node:fs/promises").then((fs) =>
-          fs.readFile(uri.fsPath, "utf-8"),
-        );
+        const patchContent = await nodefs.readFile(uri.fsPath, "utf-8");
 
         // Create a shelf entry from the imported patch
         const fileName = uri.fsPath.split("/").pop() ?? "Imported";
