@@ -422,7 +422,7 @@ function DirNodeView({
             <div key={child.fullPath}>
               <div
                 className="commit-dir-row"
-                style={{ paddingLeft: `${28 + depth * 16}px` }}
+                style={{ paddingLeft: `${12 + depth * 16}px` }}
                 onClick={() => toggleDir(child.fullPath)}
               >
                 <span
@@ -432,6 +432,10 @@ function DirNodeView({
                 </span>
                 <FolderIcon />
                 <span className="commit-dir-name">{child.name}</span>
+                <span className="commit-dir-count">
+                  {countFiles(child)}{" "}
+                  {countFiles(child) === 1 ? "file" : "files"}
+                </span>
               </div>
               {!isCollapsed && (
                 <DirNodeView
@@ -454,23 +458,32 @@ function DirNodeView({
       {node.files.map((file) => {
         const key = `${file.path}:${file.staged}`;
         return (
-          <FileItem
-            key={key}
-            file={{ ...file, path: file.path.split("/").pop() || file.path }}
-            selected={selectedFiles.has(key)}
-            highlighted={highlightedFiles.has(key)}
-            onToggle={() => onToggleFile(key)}
-            onShowDiff={() => onShowDiff(file.path, file.staged)}
-            onContextMenu={(e) => onContextMenu(e, file)}
-            onClick={(e) => {
-              const mode = e.metaKey || e.ctrlKey ? "toggle" : "single";
-              onHighlightFile(key, mode);
-            }}
-          />
+          <div key={key} style={{ paddingLeft: `${(depth + 1) * 16}px` }}>
+            <FileItem
+              file={{ ...file, path: file.path.split("/").pop() || file.path }}
+              selected={selectedFiles.has(key)}
+              highlighted={highlightedFiles.has(key)}
+              onToggle={() => onToggleFile(key)}
+              onShowDiff={() => onShowDiff(file.path, file.staged)}
+              onContextMenu={(e) => onContextMenu(e, file)}
+              onClick={(e) => {
+                const mode = e.metaKey || e.ctrlKey ? "toggle" : "single";
+                onHighlightFile(key, mode);
+              }}
+            />
+          </div>
         );
       })}
     </>
   );
+}
+
+function countFiles(node: DirNode): number {
+  let count = node.files.length;
+  for (const child of node.children) {
+    count += countFiles(child);
+  }
+  return count;
 }
 
 function FolderIcon() {
