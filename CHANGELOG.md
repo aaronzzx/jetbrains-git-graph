@@ -1,5 +1,25 @@
 # Changelog / 更新日志
 
+## [0.4.1] - 2026-05-26
+
+### Added / 新增
+- **Next/Previous File Diff Navigation** — jump between file diffs with keyboard shortcuts
+  **下一个/上一个文件 Diff 导航** — 用快捷键在文件 diff 之间跳转
+  - Cmd+F7: next file diff / 下一个文件 diff
+  - Cmd+Shift+F7: previous file diff / 上一个文件 diff
+  - Status bar shows current position (e.g. "File 2/5: filename.tsx") / 状态栏显示当前位置
+  - Commands: `git-brains.nextDiff` / `git-brains.prevDiff` (rebindable in Keyboard Shortcuts) / 可在键盘快捷键设置中自定义绑定
+- **Directory node checkboxes** in tree view / 目录树视图中的文件夹复选框
+  - Check/uncheck recursively selects/deselects all files under a directory / 勾选/取消勾选递归选中/取消目录下所有文件
+  - Indeterminate state when partially selected / 部分选中时显示半选状态
+- **Keyboard arrow navigation** — Up/Down arrows move highlight between files / 上下箭头键在文件间移动高亮
+
+### Fixed / 修复
+- Directory tree expanded state now persists across tab switches / 目录树展开状态在切换标签页后保持不变
+- Show all individual untracked files (use `git status -uall`) instead of directory summaries / 显示所有未跟踪文件而非目录摘要
+- Directory tree indentation matches IDEA style with proper nesting / 目录树缩进匹配 IDEA 风格
+- Chevron arrow placed before checkbox in directory rows (matches IDEA) / 文件夹行中箭头在复选框前面
+
 ## [0.4.0] - 2026-05-26
 
 ### Added / 新增
