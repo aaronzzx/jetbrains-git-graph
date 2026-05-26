@@ -112,12 +112,26 @@ export function activate(context: vscode.ExtensionContext) {
     }),
     vscode.commands.registerCommand("git-brains.nextDiff", async () => {
       if (diffManager) {
-        await diffManager.nextDiff();
+        const result = await diffManager.nextDiff();
+        if (!result) {
+          void vscode.window.showInformationMessage(
+            "JetGit: No diff file list. Double-click a file in Changed Files first.",
+          );
+        }
+      } else {
+        void vscode.window.showInformationMessage("JetGit: No workspace open.");
       }
     }),
     vscode.commands.registerCommand("git-brains.prevDiff", async () => {
       if (diffManager) {
-        await diffManager.prevDiff();
+        const result = await diffManager.prevDiff();
+        if (!result) {
+          void vscode.window.showInformationMessage(
+            "JetGit: No diff file list. Double-click a file in Changed Files first.",
+          );
+        }
+      } else {
+        void vscode.window.showInformationMessage("JetGit: No workspace open.");
       }
     }),
     vscode.commands.registerCommand("git-brains.openConflicts", () => {
