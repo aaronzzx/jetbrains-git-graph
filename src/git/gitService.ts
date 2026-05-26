@@ -540,7 +540,7 @@ export class GitService {
   // ─── Commit Panel Operations ───────────────────────────────────────
 
   async getWorkingTreeChanges(): Promise<import("./types").WorkingTreeFile[]> {
-    const output = await this.execGit(["status", "--porcelain=v1"]);
+    const output = await this.execGit(["status", "--porcelain=v1", "-uall"]);
     const files: import("./types").WorkingTreeFile[] = [];
 
     for (const line of output.split("\n")) {
