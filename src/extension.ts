@@ -16,6 +16,9 @@ import { GitWatcher } from "./watchers/gitWatcher";
 
 const NOT_GIT_REPO = { status: "not_git_repo" as const, data: null };
 
+/** Temporary storage for shelf diff content (base/modified) */
+const shelfDiffContent = new Map<string, string>();
+
 /** Wrap a git operation with progress events */
 function withProgress(
   messageRouter: MessageRouter,
@@ -77,6 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Register virtual document provider for git file content
     const contentProvider = new GitContentProvider(gitService);
+    contentProvider.setExternalContentMap(shelfDiffContent);
     context.subscriptions.push(
       vscode.workspace.registerTextDocumentContentProvider(
         GIT_BRAINS_SCHEME,
@@ -823,21 +827,34 @@ export function activate(context: vscode.ExtensionContext) {
     const shelfName = params.shelfName as string;
     const filePath = params.filePath as string;
 
-    // Try to find the patch file
     const patchFile = `${workspaceRoot}/.idea/shelf/${shelfName}/shelved.patch`;
     try {
       const patchContent = await nodefs.readFile(patchFile, "utf-8");
 
-      // Extract the section for this specific file from the patch
-      const filePatch = extractFilePatch(patchContent, filePath);
+      // Parse IDEA patch format to extract base content and modified content
+      const { baseContent, modifiedContent } = parseIdeaPatchForFile(
+        patchContent,
+        filePath,
+      );
 
-      // Open as a diff-highlighted document
-      const content = filePatch || patchContent;
-      const doc = await vscode.workspace.openTextDocument({
-        content,
-        language: "diff",
-      });
-      await vscode.window.showTextDocument(doc, { preview: true });
+      // Create virtual documents for both sides and show diff
+      const baseUri = vscode.Uri.parse(
+        `${GIT_BRAINS_SCHEME}:shelved/${shelfName}/${filePath}?ref=base`,
+      );
+      const modifiedUri = vscode.Uri.parse(
+        `${GIT_BRAINS_SCHEME}:shelved/${shelfName}/${filePath}?ref=modified`,
+      );
+
+      // Register temporary content for these URIs
+      shelfDiffContent.set(baseUri.toString(), baseContent);
+      shelfDiffContent.set(modifiedUri.toString(), modifiedContent);
+
+      await vscode.commands.executeCommand(
+        "vscode.diff",
+        baseUri,
+        modifiedUri,
+        `${filePath.split("/").pop()} (Shelved in ${shelfName})`,
+      );
       return { success: true };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -1034,6 +1051,159 @@ function extractFilePatch(
   }
 
   return result.length > 0 ? result.join("\n") : null;
+}
+
+/**
+ * Parse IDEA patch format to extract base and modified content for a specific file.
+ * IDEA patches have:
+ * - BaseRevisionTextPatchEP section with <+> containing the original file (escaped)
+ * - Standard unified diff section
+ */
+function parseIdeaPatchForFile(
+  patchContent: string,
+  filePath: string,
+): { baseContent: string; modifiedContent: string } {
+  const lines = patchContent.split("\n");
+  let inTargetFile = false;
+  let inBaseRevision = false;
+  let baseContentEscaped = "";
+  const diffLines: string[] = [];
+  let inDiff = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Detect file section start
+    if (line.startsWith("Index: ")) {
+      if (inTargetFile) break; // hit next file
+      const indexPath = line.substring(7).trim();
+      if (indexPath === filePath) {
+        inTargetFile = true;
+      }
+      continue;
+    }
+
+    if (!inTargetFile) continue;
+
+    // Detect BaseRevisionTextPatchEP section
+    if (
+      line.includes(
+        "com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP",
+      )
+    ) {
+      inBaseRevision = true;
+      continue;
+    }
+
+    // Collect base content (starts with <+>)
+    if (inBaseRevision && line.startsWith("<+>")) {
+      baseContentEscaped = line.substring(3);
+      inBaseRevision = false;
+      continue;
+    }
+
+    // Skip charset info
+    if (line.includes("CharsetEP")) {
+      // Next line will be <+>UTF-8 or similar, skip it
+      if (i + 1 < lines.length && lines[i + 1].startsWith("<+>")) {
+        i++;
+      }
+      continue;
+    }
+
+    // Detect diff start
+    if (line.startsWith("--- ") && !inDiff) {
+      inDiff = true;
+      diffLines.push(line);
+      continue;
+    }
+
+    if (inDiff) {
+      diffLines.push(line);
+    }
+  }
+
+  // Unescape base content (IDEA uses \n for newlines, \t for tabs in the <+> section)
+  const baseContent = baseContentEscaped
+    .replace(/\\n/g, "\n")
+    .replace(/\\t/g, "\t")
+    .replace(/\\\\/g, "\\");
+
+  // Apply unified diff to base content to get modified content
+  const modifiedContent = applyUnifiedDiff(baseContent, diffLines);
+
+  return { baseContent, modifiedContent };
+}
+
+/**
+ * Apply a unified diff to base content to produce modified content.
+ */
+function applyUnifiedDiff(baseContent: string, diffLines: string[]): string {
+  if (diffLines.length === 0) return baseContent;
+
+  const baseLines = baseContent.split("\n");
+  const result: string[] = [];
+  let baseIdx = 0;
+
+  for (let i = 0; i < diffLines.length; i++) {
+    const line = diffLines[i];
+
+    // Parse hunk header: @@ -start,count +start,count @@
+    const hunkMatch = line.match(/^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
+    if (hunkMatch) {
+      const oldStart = Number.parseInt(hunkMatch[1], 10) - 1; // 0-indexed
+
+      // Copy lines before this hunk
+      while (baseIdx < oldStart) {
+        result.push(baseLines[baseIdx]);
+        baseIdx++;
+      }
+
+      // Process hunk lines
+      for (let j = i + 1; j < diffLines.length; j++) {
+        const hunkLine = diffLines[j];
+        if (
+          hunkLine.startsWith("@@") ||
+          hunkLine.startsWith("diff ") ||
+          hunkLine.startsWith("Index: ")
+        ) {
+          i = j - 1;
+          break;
+        }
+        if (hunkLine.startsWith("-")) {
+          // Removed line — skip in base
+          baseIdx++;
+        } else if (hunkLine.startsWith("+")) {
+          // Added line
+          result.push(hunkLine.substring(1));
+        } else if (hunkLine.startsWith(" ")) {
+          // Context line
+          result.push(hunkLine.substring(1));
+          baseIdx++;
+        } else {
+          // End of diff or no-newline marker
+          if (hunkLine.startsWith("\\ No newline")) continue;
+          i = j - 1;
+          break;
+        }
+        if (j === diffLines.length - 1) {
+          i = j;
+        }
+      }
+      continue;
+    }
+
+    // Skip --- and +++ lines
+    if (line.startsWith("--- ") || line.startsWith("+++ ")) continue;
+  }
+
+  // Copy remaining base lines
+  while (baseIdx < baseLines.length) {
+    result.push(baseLines[baseIdx]);
+    baseIdx++;
+  }
+
+  return result.join("\n");
 }
 
 function getScmResourcePath(arg?: unknown): string | undefined {
