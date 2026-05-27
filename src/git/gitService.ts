@@ -1275,7 +1275,37 @@ function parseRefs(refsStr: string): RefInfo[] {
     } else if (part.startsWith("tag: ")) {
       refs.push({ type: "tag", name: part.replace("tag: ", "") });
     } else if (part.includes("/")) {
-      refs.push({ type: "remote-branch", name: part });
+      // Distinguish remote branches from local branches with slashes (e.g. feat/xxx)
+      // Remote branches in %D format are prefixed with remote name (origin/, upstream/, etc.)
+      // Common pattern: if first segment before / is a short name (likely a remote), treat as remote
+      const firstSlash = part.indexOf("/");
+      const prefix = part.substring(0, firstSlash);
+      // Heuristic: remote names are typically short (origin, upstream, fork, etc.)
+      // Local branch names with / typically start with feat/, fix/, hotfix/, release/, etc.
+      const localPrefixes = [
+        "feat",
+        "fix",
+        "hotfix",
+        "release",
+        "bugfix",
+        "feature",
+        "chore",
+        "docs",
+        "refactor",
+        "test",
+        "ci",
+        "build",
+        "perf",
+        "style",
+        "revert",
+        "wip",
+        "dependabot",
+      ];
+      if (localPrefixes.includes(prefix.toLowerCase())) {
+        refs.push({ type: "branch", name: part });
+      } else {
+        refs.push({ type: "remote-branch", name: part });
+      }
     } else {
       refs.push({ type: "branch", name: part });
     }
