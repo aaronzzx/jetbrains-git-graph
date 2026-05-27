@@ -29,44 +29,91 @@ function buildRefDisplayItems(refs: RefInfo[]): Array<{
 }> {
   const branchRef = refs.find((ref) => ref.type === "branch");
   const hasHead = refs.some((ref) => ref.type === "HEAD");
-  const seen = new Set<string>();
-
-  // Group refs by type for compact display
-  const grouped = new Map<string, string[]>();
-
-  for (const ref of refs) {
-    if (hasHead && ref.type === "branch") continue; // Skip branch if HEAD is present
-    const label =
-      ref.type === "HEAD" ? (branchRef ? branchRef.name : "HEAD") : ref.name;
-    if (!label.trim()) continue;
-
-    const type = ref.type === "HEAD" ? "HEAD" : ref.type;
-    if (!grouped.has(type)) grouped.set(type, []);
-    const list = grouped.get(type)!;
-    if (!list.includes(label.trim())) {
-      list.push(label.trim());
-    }
-  }
-
   const result: Array<{ key: string; type: RefInfo["type"]; label: string }> =
     [];
 
-  for (const [type, labels] of grouped) {
-    const dedupeKey = `${type}:${labels.join(",")}`;
-    if (seen.has(dedupeKey)) continue;
-    seen.add(dedupeKey);
+  // Collect all branch names (local and remote)
+  const localBranches: string[] = [];
+  const remoteBranches: string[] = [];
+  const tags: string[] = [];
 
-    // Compact: merge multiple refs of same type with " & "
-    const compactLabel =
-      labels.length <= 2
-        ? labels.join(" & ")
-        : `${labels[0]} +${labels.length - 1}`;
+  for (const ref of refs) {
+    if (ref.type === "HEAD") continue;
+    if (ref.type === "branch") {
+      if (!hasHead) localBranches.push(ref.name);
+      continue;
+    }
+    if (ref.type === "remote-branch") {
+      remoteBranches.push(ref.name);
+      continue;
+    }
+    if (ref.type === "tag") {
+      tags.push(ref.name);
+    }
+  }
 
-    result.push({
-      key: `${type}:${labels[0]}`,
-      type: type as RefInfo["type"],
-      label: compactLabel,
-    });
+  // HEAD tag (always shown if present)
+  if (hasHead) {
+    const label = branchRef ? `HEAD → ${branchRef.name}` : "HEAD";
+    result.push({ key: "HEAD", type: "HEAD", label });
+  }
+
+  // Merge local + remote branches that share the same base name
+  // e.g. "prod" (local) + "origin/prod" (remote) → "origin & prod"
+  const allBranchNames: string[] = [...localBranches];
+  for (const rb of remoteBranches) {
+    // Strip remote prefix (e.g. "origin/prod" → "prod")
+    const baseName = rb.includes("/") ? rb.substring(rb.indexOf("/") + 1) : rb;
+    if (!allBranchNames.includes(baseName) && !allBranchNames.includes(rb)) {
+      allBranchNames.push(rb);
+    }
+  }
+
+  // Build merged branch display
+  if (localBranches.length > 0 || remoteBranches.length > 0) {
+    // Combine all unique names for display
+    const displayNames: string[] = [];
+    const usedRemotes = new Set<string>();
+
+    for (const local of localBranches) {
+      // Find matching remote
+      const matchingRemote = remoteBranches.find((rb) => {
+        const baseName = rb.includes("/")
+          ? rb.substring(rb.indexOf("/") + 1)
+          : rb;
+        return baseName === local;
+      });
+      if (matchingRemote) {
+        // Merge: show "origin & branchName" style
+        const remote = matchingRemote.substring(0, matchingRemote.indexOf("/"));
+        displayNames.push(`${remote} & ${local}`);
+        usedRemotes.add(matchingRemote);
+      } else {
+        displayNames.push(local);
+      }
+    }
+
+    // Add remaining remote branches not merged with local
+    for (const rb of remoteBranches) {
+      if (!usedRemotes.has(rb)) {
+        displayNames.push(rb);
+      }
+    }
+
+    // Render each as a separate tag
+    for (const name of displayNames) {
+      const isRemote = name.includes("/") || name.includes(" & ");
+      result.push({
+        key: `branch:${name}`,
+        type: isRemote ? "remote-branch" : "branch",
+        label: name,
+      });
+    }
+  }
+
+  // Tags
+  for (const tag of tags) {
+    result.push({ key: `tag:${tag}`, type: "tag", label: tag });
   }
 
   return result;
