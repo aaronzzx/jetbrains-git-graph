@@ -46,6 +46,8 @@ function buildRefDisplayItems(refs: RefInfo[]): Array<{
       continue;
     }
     if (ref.type === "remote-branch") {
+      // Skip remote HEAD pointers (e.g. origin/HEAD)
+      if (ref.name.endsWith("/HEAD")) continue;
       remoteBranches.push(ref.name);
       continue;
     }
