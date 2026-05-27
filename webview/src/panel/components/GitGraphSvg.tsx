@@ -6,9 +6,9 @@ import type {
   LaneInfo,
 } from "../../shared/types/git";
 
-const COLUMN_WIDTH = 16;
+const COLUMN_WIDTH = 10;
 const ROW_HEIGHT = 28;
-const GRAPH_PADDING = 8;
+const GRAPH_PADDING = 6;
 const VISIBLE_OVERSCAN = 8;
 const LANE_COLORS = [
   "#0085d9",
@@ -466,7 +466,7 @@ export function GitGraphSvg({
                 d={line.d}
                 fill="none"
                 stroke={line.color}
-                strokeWidth={1.6}
+                strokeWidth={1.2}
                 strokeLinejoin="round"
                 strokeLinecap="round"
                 strokeDasharray={line.isDashed ? "4,2" : undefined}
@@ -489,24 +489,24 @@ export function GitGraphSvg({
           <g key={node.key}>
             {node.isMerge ? (
               <>
-                <circle cx={node.cx} cy={node.cy} r={4.6} fill={node.color} />
+                <circle cx={node.cx} cy={node.cy} r={3.5} fill={node.color} />
                 <circle
                   cx={node.cx}
                   cy={node.cy}
-                  r={2.6}
+                  r={2}
                   fill="var(--app-bg, #1e1e1e)"
                 />
-                <circle cx={node.cx} cy={node.cy} r={1.8} fill={node.color} />
+                <circle cx={node.cx} cy={node.cy} r={1.2} fill={node.color} />
               </>
             ) : (
-              <circle cx={node.cx} cy={node.cy} r={3.6} fill={node.color} />
+              <circle cx={node.cx} cy={node.cy} r={2.8} fill={node.color} />
             )}
 
             {node.isHead && (
               <circle
                 cx={node.cx}
                 cy={node.cy}
-                r={6.4}
+                r={5}
                 fill="none"
                 stroke={node.color}
                 strokeWidth={1}
