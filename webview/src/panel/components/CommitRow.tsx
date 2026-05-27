@@ -94,6 +94,7 @@ function buildRefDisplayItems(refs: RefInfo[]): Array<{
 
   // HEAD: show icon only (no text label) in row display
   if (hasHead) {
+    // HEAD adds one extra icon but no text
     result.push({ key: "HEAD", type: "HEAD", label: "" });
     // Ensure the branch name is shown if not already merged with remote
     if (branchRef && !usedLocals.has(branchRef.name)) {

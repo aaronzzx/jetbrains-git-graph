@@ -24,6 +24,7 @@ function CommitInfo({ commit }: { commit: Commit }) {
   const hasHead = commit.refs.some((r) => r.type === "HEAD");
   const displayRefs = commit.refs
     .filter((r) => !(hasHead && r.type === "branch"))
+    .filter((r) => !(r.type === "remote-branch" && r.name.endsWith("/HEAD")))
     .map((r) =>
       r.type === "HEAD" && branchRef
         ? { ...r, name: `HEAD → ${branchRef.name}` }
