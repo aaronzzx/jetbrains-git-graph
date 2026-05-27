@@ -3,6 +3,9 @@ import { usePanelStore } from "../../shared/store/panel-store";
 import type { Commit, LaneInfo, RefInfo } from "../../shared/types/git";
 
 export const ROW_HEIGHT = 28;
+const COLUMN_WIDTH = 10;
+const GRAPH_PADDING = 6;
+const NODE_TEXT_GAP = 8;
 
 /** Tag icon colors matching IDEA */
 const REF_ICON_COLORS: Record<string, string> = {
@@ -129,14 +132,12 @@ export interface ColumnWidths {
 export function CommitRow({
   commit,
   lane,
-  graphWidth,
   columnWidths,
   onCommitClick,
   onContextMenu,
 }: {
   commit: Commit;
   lane: LaneInfo | undefined;
-  graphWidth: number;
   columnWidths: ColumnWidths;
   onCommitClick: (event: React.MouseEvent, hash: string) => void;
   onContextMenu?: (event: React.MouseEvent, commit: Commit) => void;
@@ -167,7 +168,8 @@ export function CommitRow({
         display: "flex",
         alignItems: "center",
         height: ROW_HEIGHT,
-        paddingLeft: graphWidth,
+        paddingLeft:
+          GRAPH_PADDING + col * COLUMN_WIDTH + COLUMN_WIDTH / 2 + NODE_TEXT_GAP,
         paddingRight: 8,
         color: isSelected ? "var(--selected-fg)" : "inherit",
       }}

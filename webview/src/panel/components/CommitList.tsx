@@ -142,7 +142,7 @@ export function CommitList({
           display: "flex",
           alignItems: "center",
           height: 24,
-          paddingLeft: graphWidth,
+          paddingLeft: Math.min(graphWidth, 60),
           paddingRight: 8,
           borderBottom: "1px solid var(--border, #333)",
           fontSize: "11px",
@@ -229,7 +229,6 @@ export function CommitList({
                 <CommitRow
                   commit={commit}
                   lane={lane}
-                  graphWidth={graphWidth}
                   columnWidths={columnWidths}
                   onCommitClick={handleCommitClick}
                   onContextMenu={handleContextMenu}
