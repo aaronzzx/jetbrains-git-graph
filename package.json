@@ -53,7 +53,7 @@
         {
           "id": "git-brains-commit",
           "title": "Commit",
-          "icon": "$(git-commit)"
+          "icon": "images/commit-icon.svg"
         }
       ]
     },
