@@ -709,6 +709,39 @@ export function activate(context: vscode.ExtensionContext) {
     return { success: true };
   });
 
+  messageRouter.handle("deleteFiles", async (params) => {
+    if (!workspaceRoot) return NOT_GIT_REPO;
+    const filePaths = params.filePaths as string[];
+    if (!filePaths || filePaths.length === 0) return { success: false };
+
+    const fileCount = filePaths.length;
+    const message =
+      fileCount === 1
+        ? `Delete "${filePaths[0]}"? This cannot be undone.`
+        : `Delete ${fileCount} files? This cannot be undone.`;
+
+    const choice = await vscode.window.showWarningMessage(
+      message,
+      { modal: true },
+      "Delete",
+    );
+    if (choice !== "Delete") return { success: false };
+
+    for (const filePath of filePaths) {
+      const fullPath = vscode.Uri.joinPath(
+        vscode.Uri.file(workspaceRoot),
+        filePath,
+      );
+      try {
+        await vscode.workspace.fs.delete(fullPath, { recursive: true });
+      } catch {
+        // File may already be deleted, ignore
+      }
+    }
+    messageRouter.broadcastEvent("commitStateChanged", {});
+    return { success: true };
+  });
+
   messageRouter.handle("showDiffForWorkingFile", async (params) => {
     if (!gitService || !workspaceRoot) return NOT_GIT_REPO;
     const filePath = params.filePath as string;

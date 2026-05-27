@@ -74,7 +74,8 @@ export type CommandType =
   | "showIdeaShelfFileDiff"
   | "createPatchFromShelf"
   | "copyShelfPatchToClipboard"
-  | "importPatches";
+  | "importPatches"
+  | "deleteFiles";
 
 export interface Bridge {
   request(

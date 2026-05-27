@@ -547,6 +547,10 @@ export class GitService {
       if (line.length < 4) continue;
       const indexStatus = line[0];
       const workTreeStatus = line[1];
+
+      // Skip ignored files
+      if (indexStatus === "!" && workTreeStatus === "!") continue;
+
       const rest = line.substring(3);
 
       // Handle renames

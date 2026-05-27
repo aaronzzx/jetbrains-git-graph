@@ -77,7 +77,8 @@ export type CommandType =
   | "showIdeaShelfFileDiff"
   | "createPatchFromShelf"
   | "copyShelfPatchToClipboard"
-  | "importPatches";
+  | "importPatches"
+  | "deleteFiles";
 
 export type EventType =
   | "gitStateChanged"
