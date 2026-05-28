@@ -1,5 +1,30 @@
 # Changelog / 更新日志
 
+## [0.4.4] - 2026-05-28
+
+### Added / 新增
+- **IDEA-style compact Git Graph** — narrower lanes, smaller nodes, thinner lines / IDEA 风格紧凑 Git 图 — 更窄的通道、更小的节点、更细的线条
+- **Per-row text indent** — commit message starts right after the graph for that row, not global max width / 每行文字缩进基于该行 graph 宽度，不再使用全局最大宽度
+- **IDEA-style ref tag icons** — outline tag icons with overlapping layout, color-coded / IDEA 风格标签图标 — 线条轮廓标签重叠显示，颜色区分
+- **Ref merge rules** — local + remote same-name branches merge as "origin & branchName" / 同名本地+远程分支合并显示为 "origin & branchName"
+- **Detail panel email** — author email shown as clickable mailto link / 详情面板显示作者邮箱（可点击）
+- **URL highlighting** — links in commit messages are clickable / 提交信息中的链接可点击
+- **Mailmap support** — uses %aN/%aE for consistent author identity / 支持 .mailmap 统一作者身份
+- **Delete files** — right-click file or directory to delete (with confirmation) / 右键删除文件或目录（带确认）
+- **Default directory view** — commit panel defaults to directory tree mode / Commit 面板默认使用目录树视图
+
+### Fixed / 修复
+- origin/HEAD filtered from ref display / 过滤 origin/HEAD 不显示
+- HEAD shows only icon in list row (no text) / HEAD 在列表行只显示图标
+- Local branches with slashes (feat/xxx) correctly classified / 带斜杠的本地分支正确分类
+- Empty email no longer shows `<>` / 空邮箱不再显示 `<>`
+- Graph-to-text gap increased for readability / 增加 graph 和文字间距
+- Per-row indent considers all lanes passing through each row / 每行缩进考虑所有经过该行的 lane
+
+### Changed / 变更
+- Git graph COLUMN_WIDTH: 16→10, line stroke: 1.6→1.2, node radius reduced / Git 图列宽、线粗、节点半径缩小
+- Ref display: background badges → outline tag icons / 标签显示从背景色方块改为轮廓图标
+
 ## [0.4.3] - 2026-05-27
 
 ### Fixed / 修复
