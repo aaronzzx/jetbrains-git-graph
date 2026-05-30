@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { bridge } from "../../shared/bridge";
 import {
   useCommitStore,
   type WorkingTreeFile,
@@ -100,7 +101,10 @@ export function CommitTab() {
       style={{ display: "flex", flexDirection: "column", height: "100%" }}
     >
       <Toolbar
-        onRefresh={fetchChanges}
+        onRefresh={() => {
+          fetchChanges();
+          bridge.request("refreshGitState");
+        }}
         onShelve={handleShelveSelected}
         hasChanges={changes.length > 0}
       />

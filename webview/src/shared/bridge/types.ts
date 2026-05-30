@@ -77,7 +77,8 @@ export type CommandType =
   | "importPatches"
   | "deleteFiles"
   | "revealInSystemExplorer"
-  | "getRecentCommitMessages";
+  | "getRecentCommitMessages"
+  | "refreshGitState";
 
 export interface Bridge {
   request(

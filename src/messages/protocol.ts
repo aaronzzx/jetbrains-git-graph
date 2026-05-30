@@ -80,7 +80,8 @@ export type CommandType =
   | "importPatches"
   | "deleteFiles"
   | "revealInSystemExplorer"
-  | "getRecentCommitMessages";
+  | "getRecentCommitMessages"
+  | "refreshGitState";
 
 export type EventType =
   | "gitStateChanged"
