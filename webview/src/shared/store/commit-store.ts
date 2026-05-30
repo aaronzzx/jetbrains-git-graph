@@ -110,18 +110,23 @@ export const useCommitStore = create<CommitStore>((set, get) => ({
 
   async fetchChanges() {
     set({ loading: true });
+    const start = Date.now();
     try {
       const result = (await bridge.request(
         "getWorkingTreeChanges",
       )) as WorkingTreeFile[];
       if (Array.isArray(result)) {
-        // Auto-select all files by default
         const allPaths = new Set(result.map((f) => `${f.path}:${f.staged}`));
         set({ changes: result, selectedFiles: allPaths });
       }
     } catch (err) {
       console.error("fetchChanges failed:", err);
     } finally {
+      // Ensure loading bar is visible for at least 300ms
+      const elapsed = Date.now() - start;
+      if (elapsed < 300) {
+        await new Promise((r) => setTimeout(r, 300 - elapsed));
+      }
       set({ loading: false });
     }
   },
