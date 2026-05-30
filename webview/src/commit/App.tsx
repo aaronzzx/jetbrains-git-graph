@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { bridge } from "../shared/bridge";
+import { Tooltip } from "../shared/components/Tooltip";
+import "../shared/components/Tooltip.css";
 import { useCommitStore } from "../shared/store/commit-store";
 import { CommitTab } from "./components/CommitTab";
 import { IdeaShelfTab } from "./components/IdeaShelfTab";
@@ -89,75 +91,77 @@ function RebaseBanner() {
         {label}
         {progress}
       </span>
-      <div
-        role="button"
-        tabIndex={0}
-        aria-disabled={loading}
-        onClick={() => !loading && handleAction("continue")}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            if (!loading) handleAction("continue");
-          }
-        }}
-        className="rebase-action-btn rebase-continue"
-        title="Continue Rebase (git rebase --continue)"
-      >
-        {/* JetBrains official expui double chevron >> icon */}
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+      <Tooltip text="Continue Rebase (git rebase --continue)">
+        <div
+          role="button"
+          tabIndex={0}
+          aria-disabled={loading}
+          onClick={() => !loading && handleAction("continue")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (!loading) handleAction("continue");
+            }
+          }}
+          className="rebase-action-btn rebase-continue"
         >
-          <path
-            d="M2.5 11.5L6 8L2.5 4.5"
-            stroke="#ffffff"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M8.5 11.5L12 8L8.5 4.5"
-            stroke="#ffffff"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
-      <div
-        role="button"
-        tabIndex={0}
-        aria-disabled={loading}
-        onClick={() => !loading && handleAction("abort")}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            if (!loading) handleAction("abort");
-          }
-        }}
-        className="rebase-action-btn rebase-abort"
-        title="Abort Rebase (git rebase --abort)"
-      >
-        {/* JetBrains official expui/vcs/abort × icon */}
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+          {/* JetBrains official expui double chevron >> icon */}
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M2.5 11.5L6 8L2.5 4.5"
+              stroke="#ffffff"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M8.5 11.5L12 8L8.5 4.5"
+              stroke="#ffffff"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </Tooltip>
+      <Tooltip text="Abort Rebase (git rebase --abort)">
+        <div
+          role="button"
+          tabIndex={0}
+          aria-disabled={loading}
+          onClick={() => !loading && handleAction("abort")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (!loading) handleAction("abort");
+            }
+          }}
+          className="rebase-action-btn rebase-abort"
         >
-          <path
-            d="M4 12L12 4M12 12L4 4"
-            stroke="#ffffff"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
+          {/* JetBrains official expui/vcs/abort × icon */}
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 12L12 4M12 12L4 4"
+              stroke="#ffffff"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </Tooltip>
     </div>
   );
 }
