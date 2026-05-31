@@ -2,6 +2,8 @@ import { useCallback, useRef, useState } from "react";
 import CodiconListFlat from "~icons/codicon/list-flat";
 import CodiconListTree from "~icons/codicon/list-tree";
 import { FileTree } from "../../shared/components/FileTree";
+import { Tooltip } from "../../shared/components/Tooltip";
+import "../../shared/components/Tooltip.css";
 import { usePanelStore } from "../../shared/store/panel-store";
 import type { DiffFile } from "../../shared/types/git";
 import { FileContextMenu } from "./FileContextMenu";
@@ -107,42 +109,44 @@ export function FileChangeTree() {
           Changed Files
         </span>
         <span style={{ display: "flex", gap: 2 }}>
-          <button
-            type="button"
-            onClick={() => setViewMode("tree")}
-            title="Tree View"
-            style={{
-              background:
-                viewMode === "tree" ? "var(--selected-bg)" : "transparent",
-              border: "none",
-              borderRadius: 3,
-              cursor: "pointer",
-              padding: "2px 4px",
-              display: "flex",
-              alignItems: "center",
-              color: "inherit",
-            }}
-          >
-            <CodiconListTree />
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode("flat")}
-            title="Flat List"
-            style={{
-              background:
-                viewMode === "flat" ? "var(--selected-bg)" : "transparent",
-              border: "none",
-              borderRadius: 3,
-              cursor: "pointer",
-              padding: "2px 4px",
-              display: "flex",
-              alignItems: "center",
-              color: "inherit",
-            }}
-          >
-            <CodiconListFlat />
-          </button>
+          <Tooltip text="Tree View">
+            <button
+              type="button"
+              onClick={() => setViewMode("tree")}
+              style={{
+                background:
+                  viewMode === "tree" ? "var(--selected-bg)" : "transparent",
+                border: "none",
+                borderRadius: 3,
+                cursor: "pointer",
+                padding: "2px 4px",
+                display: "flex",
+                alignItems: "center",
+                color: "inherit",
+              }}
+            >
+              <CodiconListTree />
+            </button>
+          </Tooltip>
+          <Tooltip text="Flat List">
+            <button
+              type="button"
+              onClick={() => setViewMode("flat")}
+              style={{
+                background:
+                  viewMode === "flat" ? "var(--selected-bg)" : "transparent",
+                border: "none",
+                borderRadius: 3,
+                cursor: "pointer",
+                padding: "2px 4px",
+                display: "flex",
+                alignItems: "center",
+                color: "inherit",
+              }}
+            >
+              <CodiconListFlat />
+            </button>
+          </Tooltip>
         </span>
       </div>
 

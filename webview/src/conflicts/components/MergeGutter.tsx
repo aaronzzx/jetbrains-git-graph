@@ -1,5 +1,7 @@
 import type React from "react";
+import { Tooltip } from "../../shared/components/Tooltip";
 import type { MergeBlock } from "../../shared/models/merge";
+import "../../shared/components/Tooltip.css";
 import { useMergeStore } from "../../shared/store/merge-store";
 import { calculateBlockLayout } from "../utils/merge-logic";
 
@@ -93,34 +95,37 @@ export const MergeGutter: React.FC<MergeGutterProps> = ({
       if (!decided) {
         actionBtns = (
           <>
-            <button
-              type="button"
-              onClick={() => skipLeft(block.id)}
-              style={rejectBtnStyle}
-              title="Skip left"
-            >
-              ×
-            </button>
-            <button
-              type="button"
-              onClick={() => acceptLeft(block.id)}
-              style={acceptBtnStyle}
-              title="Accept left"
-            >
-              »
-            </button>
+            <Tooltip text="Skip left">
+              <button
+                type="button"
+                onClick={() => skipLeft(block.id)}
+                style={rejectBtnStyle}
+              >
+                ×
+              </button>
+            </Tooltip>
+            <Tooltip text="Accept left">
+              <button
+                type="button"
+                onClick={() => acceptLeft(block.id)}
+                style={acceptBtnStyle}
+              >
+                »
+              </button>
+            </Tooltip>
           </>
         );
       } else {
         actionBtns = (
-          <button
-            type="button"
-            onClick={() => undo(block.id, "left")}
-            style={acceptBtnStyle}
-            title="Undo"
-          >
-            ↩
-          </button>
+          <Tooltip text="Undo">
+            <button
+              type="button"
+              onClick={() => undo(block.id, "left")}
+              style={acceptBtnStyle}
+            >
+              ↩
+            </button>
+          </Tooltip>
         );
       }
     } else {
@@ -128,34 +133,37 @@ export const MergeGutter: React.FC<MergeGutterProps> = ({
       if (!decided) {
         actionBtns = (
           <>
-            <button
-              type="button"
-              onClick={() => acceptRight(block.id)}
-              style={acceptBtnStyle}
-              title="Accept right"
-            >
-              «
-            </button>
-            <button
-              type="button"
-              onClick={() => skipRight(block.id)}
-              style={rejectBtnStyle}
-              title="Skip right"
-            >
-              ×
-            </button>
+            <Tooltip text="Accept right">
+              <button
+                type="button"
+                onClick={() => acceptRight(block.id)}
+                style={acceptBtnStyle}
+              >
+                «
+              </button>
+            </Tooltip>
+            <Tooltip text="Skip right">
+              <button
+                type="button"
+                onClick={() => skipRight(block.id)}
+                style={rejectBtnStyle}
+              >
+                ×
+              </button>
+            </Tooltip>
           </>
         );
       } else {
         actionBtns = (
-          <button
-            type="button"
-            onClick={() => undo(block.id, "right")}
-            style={acceptBtnStyle}
-            title="Undo"
-          >
-            ↩
-          </button>
+          <Tooltip text="Undo">
+            <button
+              type="button"
+              onClick={() => undo(block.id, "right")}
+              style={acceptBtnStyle}
+            >
+              ↩
+            </button>
+          </Tooltip>
         );
       }
     }

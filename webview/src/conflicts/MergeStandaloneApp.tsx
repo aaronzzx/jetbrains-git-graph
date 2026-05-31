@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { bridge } from "../shared/bridge";
+import { Tooltip } from "../shared/components/Tooltip";
+import "../shared/components/Tooltip.css";
 import { useMergeStore } from "../shared/store/merge-store";
 import { MergeContainer } from "./components/MergeContainer";
 import { parseMergeBlocks } from "./utils/merge-logic";
@@ -195,24 +197,26 @@ export function MergeStandaloneApp() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <button
-            type="button"
-            onClick={goToPrevConflict}
-            disabled={conflictCount === 0}
-            style={navButtonStyle}
-            title="Previous Conflict"
-          >
-            &#x25B2;
-          </button>
-          <button
-            type="button"
-            onClick={goToNextConflict}
-            disabled={conflictCount === 0}
-            style={navButtonStyle}
-            title="Next Conflict"
-          >
-            &#x25BC;
-          </button>
+          <Tooltip text="Previous Conflict">
+            <button
+              type="button"
+              onClick={goToPrevConflict}
+              disabled={conflictCount === 0}
+              style={navButtonStyle}
+            >
+              &#x25B2;
+            </button>
+          </Tooltip>
+          <Tooltip text="Next Conflict">
+            <button
+              type="button"
+              onClick={goToNextConflict}
+              disabled={conflictCount === 0}
+              style={navButtonStyle}
+            >
+              &#x25BC;
+            </button>
+          </Tooltip>
         </div>
         <span style={{ opacity: 0.7 }}>
           {changeCount} changes &middot; {conflictCount} conflicts
@@ -239,39 +243,47 @@ export function MergeStandaloneApp() {
         }}
       >
         <div style={{ display: "flex", gap: 8 }}>
-          <button
-            type="button"
-            onClick={acceptAllLeft}
-            disabled={conflictCount === 0}
-            className="merge-btn merge-btn-secondary"
-          >
-            Accept Left
-          </button>
-          <button
-            type="button"
-            onClick={acceptAllRight}
-            disabled={conflictCount === 0}
-            className="merge-btn merge-btn-secondary"
-          >
-            Accept Right
-          </button>
+          <Tooltip text="Accept all changes from left side" position="top">
+            <button
+              type="button"
+              onClick={acceptAllLeft}
+              disabled={conflictCount === 0}
+              className="merge-btn merge-btn-secondary"
+            >
+              Accept Left
+            </button>
+          </Tooltip>
+          <Tooltip text="Accept all changes from right side" position="top">
+            <button
+              type="button"
+              onClick={acceptAllRight}
+              disabled={conflictCount === 0}
+              className="merge-btn merge-btn-secondary"
+            >
+              Accept Right
+            </button>
+          </Tooltip>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="merge-btn merge-btn-secondary"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleApply}
-            disabled={!allResolved}
-            className="merge-btn merge-btn-primary"
-          >
-            Apply
-          </button>
+          <Tooltip text="Discard changes and close" position="top">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="merge-btn merge-btn-secondary"
+            >
+              Cancel
+            </button>
+          </Tooltip>
+          <Tooltip text="Save merged result and stage file" position="top">
+            <button
+              type="button"
+              onClick={handleApply}
+              disabled={!allResolved}
+              className="merge-btn merge-btn-primary"
+            >
+              Apply
+            </button>
+          </Tooltip>
         </div>
       </div>
     </div>

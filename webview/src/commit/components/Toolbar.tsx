@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+import { Tooltip } from "../../shared/components/Tooltip";
+import "../../shared/components/Tooltip.css";
 import { useCommitStore } from "../../shared/store/commit-store";
 
 interface ToolbarProps {
@@ -35,71 +37,78 @@ export function Toolbar({ onRefresh, onShelve, hasChanges }: ToolbarProps) {
 
   return (
     <div className="commit-toolbar">
-      <button
-        type="button"
-        className="commit-toolbar-btn"
-        title="Refresh"
-        onClick={onRefresh}
-      >
-        <RefreshIcon />
-      </button>
-      <button
-        type="button"
-        className="commit-toolbar-btn"
-        title="Rollback"
-        disabled={!hasChanges}
-      >
-        <RollbackIcon />
-      </button>
-      <button
-        type="button"
-        className="commit-toolbar-btn"
-        title="Shelve Changes"
-        onClick={onShelve}
-        disabled={!hasChanges}
-      >
-        <ShelveIcon />
-      </button>
-      <button
-        type="button"
-        className="commit-toolbar-btn"
-        title="Show Diff"
-        disabled={!hasChanges}
-      >
-        <DiffIcon />
-      </button>
+      <Tooltip text="Refresh">
+        <button
+          type="button"
+          className="commit-toolbar-btn"
+          onClick={onRefresh}
+        >
+          <RefreshIcon />
+        </button>
+      </Tooltip>
+      <Tooltip text="Rollback">
+        <button
+          type="button"
+          className="commit-toolbar-btn"
+          disabled={!hasChanges}
+        >
+          <RollbackIcon />
+        </button>
+      </Tooltip>
+      <Tooltip text="Shelve Changes">
+        <button
+          type="button"
+          className="commit-toolbar-btn"
+          onClick={onShelve}
+          disabled={!hasChanges}
+        >
+          <ShelveIcon />
+        </button>
+      </Tooltip>
+      <Tooltip text="Show Diff">
+        <button
+          type="button"
+          className="commit-toolbar-btn"
+          disabled={!hasChanges}
+        >
+          <DiffIcon />
+        </button>
+      </Tooltip>
 
       <div className="commit-toolbar-spacer" />
 
       <div style={{ position: "relative" }}>
-        <button
-          type="button"
-          className="commit-toolbar-btn"
-          title="View Options"
-          onClick={() => setShowViewMenu(!showViewMenu)}
-        >
-          <ViewOptionsIcon />
-        </button>
+        <Tooltip text="View Options">
+          <button
+            type="button"
+            className="commit-toolbar-btn"
+            onClick={() => setShowViewMenu(!showViewMenu)}
+          >
+            <ViewOptionsIcon />
+          </button>
+        </Tooltip>
         {showViewMenu && (
           <ViewOptionsMenu onClose={() => setShowViewMenu(false)} />
         )}
       </div>
-      <button
-        type="button"
-        className="commit-toolbar-btn"
-        title="Expand All"
-        onClick={handleExpandAll}
-      >
-        <ExpandAllIcon />
-      </button>
-      <button
-        type="button"
-        className="commit-toolbar-btn"
-        title="Collapse All"
-        onClick={handleCollapseAll}
-      >
-        <CollapseAllIcon />
-      </button>
+      <Tooltip text="Expand All">
+        <button
+          type="button"
+          className="commit-toolbar-btn"
+          onClick={handleExpandAll}
+        >
+          <ExpandAllIcon />
+        </button>
+      </Tooltip>
+      <Tooltip text="Collapse All">
+        <button
+          type="button"
+          className="commit-toolbar-btn"
+          onClick={handleCollapseAll}
+        >
+          <CollapseAllIcon />
+        </button>
+      </Tooltip>
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { bridge } from "../../shared/bridge";
+import { Tooltip } from "../../shared/components/Tooltip";
+import "../../shared/components/Tooltip.css";
 import { useCommitStore } from "../../shared/store/commit-store";
 
 export function CommitMessageArea() {
@@ -112,42 +114,43 @@ export function CommitMessageArea() {
           />
           Amend
         </label>
-        <span
-          ref={historyBtnRef}
-          onClick={handleHistoryClick}
-          style={{
-            cursor: "pointer",
-            display: "inline-flex",
-            alignItems: "center",
-            borderRadius: 3,
-            padding: 2,
-            transition: "background 0.15s, opacity 0.15s",
-            opacity: showHistory ? 1 : 0.6,
-            background: showHistory
-              ? "var(--vscode-toolbar-activeBackground, rgba(0,0,0,0.1))"
-              : "transparent",
-          }}
-          onMouseEnter={(e) => {
-            if (!showHistory)
-              (e.currentTarget as HTMLElement).style.opacity = "1";
-          }}
-          onMouseLeave={(e) => {
-            if (!showHistory)
-              (e.currentTarget as HTMLElement).style.opacity = "0.6";
-          }}
-          onMouseDown={(e) => {
-            (e.currentTarget as HTMLElement).style.background =
-              "var(--vscode-toolbar-activeBackground, rgba(0,0,0,0.15))";
-          }}
-          onMouseUp={(e) => {
-            (e.currentTarget as HTMLElement).style.background = showHistory
-              ? "var(--vscode-toolbar-activeBackground, rgba(0,0,0,0.1))"
-              : "transparent";
-          }}
-          title="Recent commit messages"
-        >
-          <HistoryIcon />
-        </span>
+        <Tooltip text="Recent commit messages">
+          <span
+            ref={historyBtnRef}
+            onClick={handleHistoryClick}
+            style={{
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              borderRadius: 3,
+              padding: 2,
+              transition: "background 0.15s, opacity 0.15s",
+              opacity: showHistory ? 1 : 0.6,
+              background: showHistory
+                ? "var(--vscode-toolbar-activeBackground, rgba(0,0,0,0.1))"
+                : "transparent",
+            }}
+            onMouseEnter={(e) => {
+              if (!showHistory)
+                (e.currentTarget as HTMLElement).style.opacity = "1";
+            }}
+            onMouseLeave={(e) => {
+              if (!showHistory)
+                (e.currentTarget as HTMLElement).style.opacity = "0.6";
+            }}
+            onMouseDown={(e) => {
+              (e.currentTarget as HTMLElement).style.background =
+                "var(--vscode-toolbar-activeBackground, rgba(0,0,0,0.15))";
+            }}
+            onMouseUp={(e) => {
+              (e.currentTarget as HTMLElement).style.background = showHistory
+                ? "var(--vscode-toolbar-activeBackground, rgba(0,0,0,0.1))"
+                : "transparent";
+            }}
+          >
+            <HistoryIcon />
+          </span>
+        </Tooltip>
         {showHistory &&
           createPortal(
             <HistoryDropdown
