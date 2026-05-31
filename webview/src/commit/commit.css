@@ -659,3 +659,18 @@
 .rebase-action-btn.rebase-abort {
   background: #c75b5b;
 }
+
+/* ─── Merge Conflicts Resolve Link ─────────────────────────────── */
+.commit-group-resolve-link {
+  margin-left: 8px;
+  color: var(--vscode-textLink-foreground, #3794ff);
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.commit-group-resolve-link:hover {
+  color: var(--vscode-textLink-activeForeground, #3794ff);
+  text-decoration: none;
+}

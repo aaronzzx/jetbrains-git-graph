@@ -243,7 +243,7 @@ export function MergeStandaloneApp() {
             type="button"
             onClick={acceptAllLeft}
             disabled={conflictCount === 0}
-            style={actionButtonStyle}
+            className="merge-btn merge-btn-secondary"
           >
             Accept Left
           </button>
@@ -251,7 +251,7 @@ export function MergeStandaloneApp() {
             type="button"
             onClick={acceptAllRight}
             disabled={conflictCount === 0}
-            style={actionButtonStyle}
+            className="merge-btn merge-btn-secondary"
           >
             Accept Right
           </button>
@@ -260,7 +260,7 @@ export function MergeStandaloneApp() {
           <button
             type="button"
             onClick={handleCancel}
-            style={actionButtonStyle}
+            className="merge-btn merge-btn-secondary"
           >
             Cancel
           </button>
@@ -268,7 +268,7 @@ export function MergeStandaloneApp() {
             type="button"
             onClick={handleApply}
             disabled={!allResolved}
-            style={applyButtonStyle}
+            className="merge-btn merge-btn-primary"
           >
             Apply
           </button>
@@ -281,21 +281,9 @@ export function MergeStandaloneApp() {
 const navButtonStyle: React.CSSProperties = {
   background: "transparent",
   border: "1px solid var(--border)",
-  borderRadius: 3,
+  borderRadius: 6,
   color: "var(--app-fg)",
   padding: "2px 6px",
   fontSize: 10,
   lineHeight: 1,
-};
-
-const actionButtonStyle: React.CSSProperties = {
-  borderRadius: 3,
-  padding: "4px 12px",
-  fontSize: 12,
-};
-
-const applyButtonStyle: React.CSSProperties = {
-  ...actionButtonStyle,
-  background: "var(--button-bg)",
-  color: "var(--button-fg)",
 };

@@ -81,7 +81,11 @@ export type CommandType =
   | "deleteFiles"
   | "revealInSystemExplorer"
   | "getRecentCommitMessages"
-  | "refreshGitState";
+  | "refreshGitState"
+  | "getRebaseState"
+  | "rebaseAction"
+  | "mergeAction"
+  | "openConflictsPanel";
 
 export type EventType =
   | "gitStateChanged"

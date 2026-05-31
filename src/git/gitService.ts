@@ -370,6 +370,73 @@ export class GitService {
     }
   }
 
+  async getRebaseState(): Promise<{
+    isRebasing: boolean;
+    branchName?: string;
+    step?: number;
+    totalSteps?: number;
+  }> {
+    const rebaseMergePath = path.join(this.cwd, ".git", "rebase-merge");
+    const rebaseApplyPath = path.join(this.cwd, ".git", "rebase-apply");
+    try {
+      await fs.access(rebaseMergePath);
+      let branchName = "";
+      let step = 0;
+      let totalSteps = 0;
+      try {
+        const headName = await fs.readFile(
+          path.join(rebaseMergePath, "head-name"),
+          "utf-8",
+        );
+        branchName = headName.trim().replace("refs/heads/", "");
+      } catch {}
+      try {
+        const msgnum = await fs.readFile(
+          path.join(rebaseMergePath, "msgnum"),
+          "utf-8",
+        );
+        step = Number.parseInt(msgnum.trim(), 10);
+      } catch {}
+      try {
+        const end = await fs.readFile(
+          path.join(rebaseMergePath, "end"),
+          "utf-8",
+        );
+        totalSteps = Number.parseInt(end.trim(), 10);
+      } catch {}
+      return { isRebasing: true, branchName, step, totalSteps };
+    } catch {}
+    try {
+      await fs.access(rebaseApplyPath);
+      let branchName = "";
+      let step = 0;
+      let totalSteps = 0;
+      try {
+        const headName = await fs.readFile(
+          path.join(rebaseApplyPath, "head-name"),
+          "utf-8",
+        );
+        branchName = headName.trim().replace("refs/heads/", "");
+      } catch {}
+      try {
+        const next = await fs.readFile(
+          path.join(rebaseApplyPath, "next"),
+          "utf-8",
+        );
+        step = Number.parseInt(next.trim(), 10);
+      } catch {}
+      try {
+        const last = await fs.readFile(
+          path.join(rebaseApplyPath, "last"),
+          "utf-8",
+        );
+        totalSteps = Number.parseInt(last.trim(), 10);
+      } catch {}
+      return { isRebasing: true, branchName, step, totalSteps };
+    } catch {}
+    return { isRebasing: false };
+  }
+
   async getConflictFiles(): Promise<string[]> {
     const output = await this.execGit([
       "diff",
@@ -448,6 +515,21 @@ export class GitService {
 
   async rebase(onto: string): Promise<void> {
     await this.execGit(["rebase", onto]);
+    this.invalidateCache();
+  }
+
+  async rebaseAction(action: "continue" | "abort" | "skip"): Promise<void> {
+    await this.execGit(["rebase", `--${action}`]);
+    this.invalidateCache();
+  }
+
+  async mergeAbort(): Promise<void> {
+    await this.execGit(["merge", "--abort"]);
+    this.invalidateCache();
+  }
+
+  async mergeContinue(): Promise<void> {
+    await this.execGit(["commit", "--no-edit"]);
     this.invalidateCache();
   }
 

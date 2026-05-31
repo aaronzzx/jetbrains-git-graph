@@ -40,26 +40,31 @@ export function CommitTab() {
   } | null>(null);
 
   // Group files: staged (Changes) vs unstaged/untracked (Unversioned Files)
-  const { stagedFiles, changedFiles, untrackedFiles } = useMemo(() => {
-    const staged: WorkingTreeFile[] = [];
-    const changed: WorkingTreeFile[] = [];
-    const untracked: WorkingTreeFile[] = [];
+  const { stagedFiles, changedFiles, untrackedFiles, conflictedFiles } =
+    useMemo(() => {
+      const staged: WorkingTreeFile[] = [];
+      const changed: WorkingTreeFile[] = [];
+      const untracked: WorkingTreeFile[] = [];
+      const conflicted: WorkingTreeFile[] = [];
 
-    for (const file of changes) {
-      if (file.staged) {
-        staged.push(file);
-      } else if (file.status === "untracked") {
-        untracked.push(file);
-      } else {
-        changed.push(file);
+      for (const file of changes) {
+        if (file.status === "conflicted") {
+          conflicted.push(file);
+        } else if (file.staged) {
+          staged.push(file);
+        } else if (file.status === "untracked") {
+          untracked.push(file);
+        } else {
+          changed.push(file);
+        }
       }
-    }
-    return {
-      stagedFiles: staged,
-      changedFiles: changed,
-      untrackedFiles: untracked,
-    };
-  }, [changes]);
+      return {
+        stagedFiles: staged,
+        changedFiles: changed,
+        untrackedFiles: untracked,
+        conflictedFiles: conflicted,
+      };
+    }, [changes]);
 
   const handleShelveSelected = useCallback(async () => {
     const selectedPaths = changes
@@ -110,6 +115,40 @@ export function CommitTab() {
       />
 
       <div className="commit-file-list">
+        {/* Merge Conflicts */}
+        {conflictedFiles.length > 0 && (
+          <FileGroup
+            label="Merge Conflicts"
+            files={conflictedFiles}
+            count={conflictedFiles.length}
+            expanded={expandedGroups.has("conflicts")}
+            groupByDirectory={groupByDirectory}
+            onToggle={() => toggleGroup("conflicts")}
+            selectedFiles={selectedFiles}
+            highlightedFiles={highlightedFiles}
+            onToggleFile={toggleFileSelection}
+            onSetFileKeys={setFileKeys}
+            onHighlightFile={highlightFile}
+            onShowDiff={showDiff}
+            onContextMenu={handleContextMenu}
+            onDirContextMenu={handleDirContextMenu}
+            action={
+              <span
+                className="commit-group-resolve-link"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  bridge.request("openConflictsPanel");
+                }}
+                onKeyDown={() => {}}
+                role="button"
+                tabIndex={0}
+              >
+                Resolve
+              </span>
+            }
+          />
+        )}
+
         {/* Changes (tracked, modified) */}
         {changedFiles.length > 0 && (
           <FileGroup
@@ -217,6 +256,7 @@ interface FileGroupProps {
     files: WorkingTreeFile[],
     dirName: string,
   ) => void;
+  action?: React.ReactNode;
 }
 
 function FileGroup({
@@ -234,6 +274,7 @@ function FileGroup({
   onShowDiff,
   onContextMenu,
   onDirContextMenu,
+  action,
 }: FileGroupProps) {
   const allKeys = useMemo(
     () => files.map((f) => `${f.path}:${f.staged}`),
@@ -328,6 +369,7 @@ function FileGroup({
         <span className="commit-group-count">
           {count} {count === 1 ? "file" : "files"}
         </span>
+        {action}
       </div>
       {expanded && (
         <div

@@ -78,7 +78,12 @@ export type CommandType =
   | "deleteFiles"
   | "revealInSystemExplorer"
   | "getRecentCommitMessages"
-  | "refreshGitState";
+  | "refreshGitState"
+  | "getRebaseState"
+  | "rebaseAction"
+  | "mergeAction"
+  | "showErrorNotification"
+  | "openConflictsPanel";
 
 export interface Bridge {
   request(

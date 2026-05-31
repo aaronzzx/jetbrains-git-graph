@@ -76,9 +76,14 @@ export const useMergeStore = create<MergeStoreState>((set) => ({
     set((state) => {
       const blocks = state.blocks.map((block) => {
         if (block.id !== id) return block;
-        const next = { ...block, leftAccepted: true, leftSkipped: false };
+        const next = {
+          ...block,
+          leftAccepted: true,
+          leftSkipped: false,
+          rightSkipped: !block.rightAccepted,
+        };
         next.resultLines = buildResult(block, next);
-        next.isResolved = leftDecided(next) && rightDecided(next);
+        next.isResolved = true;
         return next;
       });
       return { blocks, isDirty: computeIsDirty(blocks, state.initialBlocks) };
@@ -88,9 +93,14 @@ export const useMergeStore = create<MergeStoreState>((set) => ({
     set((state) => {
       const blocks = state.blocks.map((block) => {
         if (block.id !== id) return block;
-        const next = { ...block, rightAccepted: true, rightSkipped: false };
+        const next = {
+          ...block,
+          rightAccepted: true,
+          rightSkipped: false,
+          leftSkipped: !block.leftAccepted,
+        };
         next.resultLines = buildResult(block, next);
-        next.isResolved = leftDecided(next) && rightDecided(next);
+        next.isResolved = true;
         return next;
       });
       return { blocks, isDirty: computeIsDirty(blocks, state.initialBlocks) };
@@ -145,9 +155,14 @@ export const useMergeStore = create<MergeStoreState>((set) => ({
     set((state) => {
       const blocks = state.blocks.map((block) => {
         if (block.state !== "conflict") return block;
-        const next = { ...block, leftAccepted: true, leftSkipped: false };
+        const next = {
+          ...block,
+          leftAccepted: true,
+          leftSkipped: false,
+          rightSkipped: !block.rightAccepted,
+        };
         next.resultLines = buildResult(block, next);
-        next.isResolved = leftDecided(next) && rightDecided(next);
+        next.isResolved = true;
         return next;
       });
       return { blocks, isDirty: computeIsDirty(blocks, state.initialBlocks) };
@@ -157,9 +172,14 @@ export const useMergeStore = create<MergeStoreState>((set) => ({
     set((state) => {
       const blocks = state.blocks.map((block) => {
         if (block.state !== "conflict") return block;
-        const next = { ...block, rightAccepted: true, rightSkipped: false };
+        const next = {
+          ...block,
+          rightAccepted: true,
+          rightSkipped: false,
+          leftSkipped: !block.leftAccepted,
+        };
         next.resultLines = buildResult(block, next);
-        next.isResolved = leftDecided(next) && rightDecided(next);
+        next.isResolved = true;
         return next;
       });
       return { blocks, isDirty: computeIsDirty(blocks, state.initialBlocks) };

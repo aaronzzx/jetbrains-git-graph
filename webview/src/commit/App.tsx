@@ -166,6 +166,170 @@ function RebaseBanner() {
   );
 }
 
+interface MergeStateInfo {
+  isMerging: boolean;
+  mergeHead?: string;
+  mergeMsg?: string;
+}
+
+function MergeBanner() {
+  const [state, setState] = useState<MergeStateInfo>({ isMerging: false });
+  const [loading, setLoading] = useState(false);
+
+  const fetchState = useCallback(async () => {
+    try {
+      const result = (await bridge.request("getMergeState")) as MergeStateInfo;
+      setState(result);
+    } catch {
+      setState({ isMerging: false });
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchState();
+    const unsub = bridge.onEvent((event) => {
+      if (event === "gitStateChanged" || event === "commitStateChanged") {
+        fetchState();
+      }
+    });
+    return unsub;
+  }, [fetchState]);
+
+  const handleContinue = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Check if there are unresolved conflicts
+      const conflicts = (await bridge.request("getConflictFiles")) as string[];
+      if (conflicts && conflicts.length > 0) {
+        // Open conflicts panel to let user resolve
+        await bridge.request("openConflictsPanel");
+      } else {
+        // All conflicts resolved, commit
+        await bridge.request("mergeAction", { action: "continue" });
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      bridge.request("showErrorNotification", { message: msg }).catch(() => {});
+    } finally {
+      setLoading(false);
+      fetchState();
+    }
+  }, [fetchState]);
+
+  const handleAbort = useCallback(async () => {
+    setLoading(true);
+    try {
+      await bridge.request("mergeAction", { action: "abort" });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      bridge.request("showErrorNotification", { message: msg }).catch(() => {});
+    } finally {
+      setLoading(false);
+      fetchState();
+    }
+  }, [fetchState]);
+
+  if (!state.isMerging) return null;
+
+  // Parse branch name from merge message like "Merge branch 'feature' into main"
+  let label = "Merging";
+  if (state.mergeMsg) {
+    const match = state.mergeMsg.match(
+      /Merge (?:branch '([^']+)'|remote-tracking branch '([^']+)')/,
+    );
+    if (match) {
+      label = `Merging ${match[1] || match[2]}`;
+    }
+  }
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "6px 12px",
+        background: "#e8f5e9",
+        borderBottom: "1px solid #c8e6c9",
+        fontSize: 12,
+        flexShrink: 0,
+      }}
+    >
+      <span style={{ fontSize: 14 }}>⚠️</span>
+      <span style={{ fontWeight: 600, flex: 1, color: "#333" }}>{label}</span>
+      <Tooltip text="Resolve Conflicts" position="top">
+        <div
+          role="button"
+          tabIndex={0}
+          aria-disabled={loading}
+          onClick={() => !loading && handleContinue()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (!loading) handleContinue();
+            }
+          }}
+          className="rebase-action-btn rebase-continue"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M2.5 11.5L6 8L2.5 4.5"
+              stroke="#ffffff"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M8.5 11.5L12 8L8.5 4.5"
+              stroke="#ffffff"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </Tooltip>
+      <Tooltip text="Abort Merge (git merge --abort)" position="top">
+        <div
+          role="button"
+          tabIndex={0}
+          aria-disabled={loading}
+          onClick={() => !loading && handleAbort()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              if (!loading) handleAbort();
+            }
+          }}
+          className="rebase-action-btn rebase-abort"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 12L12 4M12 12L4 4"
+              stroke="#ffffff"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </Tooltip>
+    </div>
+  );
+}
+
 export function CommitApp() {
   const {
     activeTab,
@@ -208,6 +372,7 @@ export function CommitApp() {
         </button>
       </div>
       <RebaseBanner />
+      <MergeBanner />
       <ProgressBar visible={loading} />
       <div className="commit-content">
         {activeTab === "commit" && <CommitTab />}

@@ -332,9 +332,45 @@ export function activate(context: vscode.ExtensionContext) {
     return gitService.getMergeState();
   });
 
+  messageRouter.handle("getRebaseState", async () => {
+    if (!gitService) return { isRebasing: false };
+    return gitService.getRebaseState();
+  });
+
+  messageRouter.handle("rebaseAction", async (params) => {
+    if (!gitService) return NOT_GIT_REPO;
+    const action = params.action as "continue" | "abort" | "skip";
+    return withProgress(messageRouter, async () => {
+      await gitService.rebaseAction(action);
+      messageRouter.broadcastEvent("gitStateChanged", { scope: "all" });
+      messageRouter.broadcastEvent("commitStateChanged", {});
+      return { success: true };
+    });
+  });
+
+  messageRouter.handle("mergeAction", async (params) => {
+    if (!gitService) return NOT_GIT_REPO;
+    const action = params.action as "continue" | "abort";
+    return withProgress(messageRouter, async () => {
+      if (action === "continue") {
+        await gitService.mergeContinue();
+      } else {
+        await gitService.mergeAbort();
+      }
+      messageRouter.broadcastEvent("gitStateChanged", { scope: "all" });
+      messageRouter.broadcastEvent("commitStateChanged", {});
+      return { success: true };
+    });
+  });
+
   messageRouter.handle("getConflictFiles", async () => {
     if (!gitService) return NOT_GIT_REPO;
     return gitService.getConflictFiles();
+  });
+
+  messageRouter.handle("openConflictsPanel", async () => {
+    await vscode.commands.executeCommand("git-brains.openConflicts");
+    return { success: true };
   });
 
   messageRouter.handle("getFileVersions", async (params) => {
