@@ -116,8 +116,25 @@ export const useCommitStore = create<CommitStore>((set, get) => ({
         "getWorkingTreeChanges",
       )) as WorkingTreeFile[];
       if (Array.isArray(result)) {
-        const allPaths = new Set(result.map((f) => `${f.path}:${f.staged}`));
-        set({ changes: result, selectedFiles: allPaths });
+        const newPaths = new Set(result.map((f) => `${f.path}:${f.staged}`));
+        const { selectedFiles, changes } = get();
+        if (changes.length === 0) {
+          // First load — select all
+          set({ changes: result, selectedFiles: newPaths });
+        } else {
+          // Refresh — preserve user's selection state
+          // Keep previously selected files that still exist
+          const preserved = new Set<string>();
+          for (const p of selectedFiles) {
+            if (newPaths.has(p)) preserved.add(p);
+          }
+          // Auto-select new files that weren't in the previous list
+          const oldPaths = new Set(changes.map((f) => `${f.path}:${f.staged}`));
+          for (const p of newPaths) {
+            if (!oldPaths.has(p)) preserved.add(p);
+          }
+          set({ changes: result, selectedFiles: preserved });
+        }
       }
     } catch (err) {
       console.error("fetchChanges failed:", err);
