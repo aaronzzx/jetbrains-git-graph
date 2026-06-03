@@ -187,6 +187,7 @@ export function CommitList({
         flexDirection: "column",
         flex: 1,
         minHeight: 0,
+        overflowX: "auto",
       }}
     >
       {/* Column header with resize handles */}
