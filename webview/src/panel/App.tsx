@@ -90,9 +90,9 @@ export function PanelApp() {
       <ProgressBar visible={operationInProgress || loading} />
       <div style={{ flex: 1, display: "flex", minHeight: 0 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <Allotment proportionalLayout={false} key={`allot-left-${showLeft}`}>
+          <Allotment proportionalLayout={false}>
             <Allotment.Pane
-              preferredSize={showLeft ? 330 : 28}
+              preferredSize={330}
               minSize={showLeft ? 140 : 28}
               maxSize={showLeft ? 500 : 28}
               visible
@@ -144,7 +144,7 @@ export function PanelApp() {
               </div>
             </Allotment.Pane>
             <Allotment.Pane
-              preferredSize={showRight ? 350 : 28}
+              preferredSize={350}
               minSize={showRight ? 250 : 28}
               maxSize={showRight ? 600 : 28}
               visible
