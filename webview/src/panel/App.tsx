@@ -52,9 +52,33 @@ export function PanelApp() {
 
   const [showLeft, setShowLeft] = useState(true);
   const [showRight, setShowRight] = useState(true);
+  const [leftWidth, setLeftWidth] = useState(330);
 
   const toggleLeft = useCallback(() => setShowLeft((v) => !v), []);
   const toggleRight = useCallback(() => setShowRight((v) => !v), []);
+
+  // Drag handle for left panel resize
+  const startLeftResize = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      const startX = e.clientX;
+      const startWidth = leftWidth;
+      const onMove = (ev: MouseEvent) => {
+        const newWidth = Math.max(
+          140,
+          Math.min(500, startWidth + ev.clientX - startX),
+        );
+        setLeftWidth(newWidth);
+      };
+      const onUp = () => {
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+      };
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+    },
+    [leftWidth],
+  );
 
   const middleRef = usePreventSelect();
 
@@ -92,22 +116,21 @@ export function PanelApp() {
         {/* Left branch panel — outside Allotment to avoid flicker */}
         <div
           style={{
-            width: showLeft ? 330 : 28,
-            minWidth: showLeft ? 140 : 28,
-            maxWidth: showLeft ? 500 : 28,
+            width: showLeft ? leftWidth : 28,
             height: "100%",
             flexShrink: 0,
             overflow: "hidden",
-            resize: showLeft ? "horizontal" : "none",
-            borderRight: "1px solid var(--border)",
+            display: "flex",
           }}
         >
           {showLeft ? (
             <div
               style={{
+                flex: 1,
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
+                overflow: "hidden",
               }}
             >
               <BranchTree onTogglePanel={toggleLeft} />
@@ -116,6 +139,7 @@ export function PanelApp() {
             <div
               style={{
                 height: "100%",
+                width: "100%",
                 display: "flex",
                 alignItems: "flex-start",
                 justifyContent: "center",
@@ -132,6 +156,36 @@ export function PanelApp() {
                 </button>
               </Tooltip>
             </div>
+          )}
+          {showLeft && (
+            <div
+              onMouseDown={startLeftResize}
+              style={{
+                width: 4,
+                cursor: "col-resize",
+                flexShrink: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  width: 1,
+                  height: "100%",
+                  background: "var(--border)",
+                }}
+              />
+            </div>
+          )}
+          {!showLeft && (
+            <div
+              style={{
+                width: 1,
+                flexShrink: 0,
+                background: "var(--border)",
+              }}
+            />
           )}
         </div>
 
