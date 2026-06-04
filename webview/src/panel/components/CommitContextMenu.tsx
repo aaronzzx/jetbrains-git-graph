@@ -88,6 +88,7 @@ interface CommitContextMenuProps {
   y: number;
   commit: Commit;
   onClose: () => void;
+  onCreateBranch?: (hash: string, defaultName: string) => void;
 }
 
 export function CommitContextMenu({
@@ -95,6 +96,7 @@ export function CommitContextMenu({
   y,
   commit,
   onClose,
+  onCreateBranch,
 }: CommitContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const currentBranch = usePanelStore((s) => s.currentBranch);
@@ -252,6 +254,11 @@ export function CommitContextMenu({
 
   const handleNewBranch = async () => {
     onClose();
+    if (onCreateBranch) {
+      onCreateBranch(commit.hash, "");
+      return;
+    }
+    // Fallback to showInputBox if no dialog handler provided
     const result = (await bridge.request("showInputBox", {
       prompt: `Create new branch from ${shortHash}:`,
       placeHolder: "branch-name",

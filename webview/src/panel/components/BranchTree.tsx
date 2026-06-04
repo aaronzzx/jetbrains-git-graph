@@ -7,6 +7,7 @@ import { usePreventSelect } from "../../shared/hooks/usePreventSelect";
 import { usePanelStore } from "../../shared/store/panel-store";
 import type { BranchInfo, TagInfo } from "../../shared/types/git";
 import { BranchSidebar as BranchSidebarComponent } from "./BranchSidebar";
+import { CreateBranchDialog } from "./CreateBranchDialog";
 
 // ---------------------------------------------------------------------------
 // Inline SVG Icons (stroke-based, IDEA style)
@@ -320,6 +321,12 @@ export function BranchTree({
     branch: BranchInfo;
   } | null>(null);
 
+  // Create branch dialog state
+  const [createBranchDialog, setCreateBranchDialog] = useState<{
+    startPoint: string;
+    defaultName: string;
+  } | null>(null);
+
   const handleContextMenu = useCallback(
     (e: React.MouseEvent, branch: BranchInfo) => {
       e.preventDefault();
@@ -432,7 +439,12 @@ export function BranchTree({
         display: "flex",
       }}
     >
-      <BranchSidebarComponent onTogglePanel={onTogglePanel} />
+      <BranchSidebarComponent
+        onTogglePanel={onTogglePanel}
+        onNewBranch={() =>
+          setCreateBranchDialog({ startPoint: "HEAD", defaultName: "" })
+        }
+      />
       <div
         ref={containerRef}
         style={{
@@ -642,6 +654,41 @@ export function BranchTree({
               branch={contextMenu.branch}
               currentBranch={currentBranch}
               onClose={closeContextMenu}
+              onCreateBranch={(startPoint, defaultName) => {
+                closeContextMenu();
+                setCreateBranchDialog({ startPoint, defaultName });
+              }}
+            />,
+            document.body,
+          )}
+
+        {/* Create Branch Dialog */}
+        {createBranchDialog &&
+          createPortal(
+            <CreateBranchDialog
+              title={`Create Branch from '${createBranchDialog.startPoint}'`}
+              defaultName={createBranchDialog.defaultName}
+              placeholder="branch-name"
+              onClose={() => setCreateBranchDialog(null)}
+              onConfirm={async ({ branchName, checkout, force }) => {
+                try {
+                  await bridge.request("createBranch", {
+                    newBranchName: branchName,
+                    startPoint: createBranchDialog.startPoint,
+                    checkout,
+                    force,
+                  });
+                  setCreateBranchDialog(null);
+                  return undefined;
+                } catch (err) {
+                  const msg = err instanceof Error ? err.message : String(err);
+                  // Extract the useful part from git error
+                  const match = msg.match(/fatal:\s*(.+)/);
+                  return match
+                    ? match[1]
+                    : `Branch '${branchName}' already exists.\nChange the name or overwrite existing branch.`;
+                }
+              }}
             />,
             document.body,
           )}
@@ -945,12 +992,14 @@ function BranchContextMenu({
   branch,
   currentBranch,
   onClose,
+  onCreateBranch,
 }: {
   x: number;
   y: number;
   branch: BranchInfo;
   currentBranch: string;
   onClose: () => void;
+  onCreateBranch: (startPoint: string, defaultName: string) => void;
 }) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<{
@@ -1046,22 +1095,8 @@ function BranchContextMenu({
     }
   };
 
-  const handleNewBranch = async () => {
-    onClose();
-    const result = (await bridge.request("showInputBox", {
-      prompt: `New branch name (from '${branch.name}'):`,
-      placeHolder: "branch-name",
-      value: branch.name,
-    })) as { value: string | null };
-    if (!result.value || !result.value.trim()) return;
-    try {
-      await bridge.request("createBranch", {
-        newBranchName: result.value.trim(),
-        startPoint: branch.name,
-      });
-    } catch (err) {
-      console.error("Create branch failed:", err);
-    }
+  const handleNewBranch = () => {
+    onCreateBranch(branch.name, branch.name);
   };
 
   const handleDelete = async () => {

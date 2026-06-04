@@ -483,8 +483,15 @@ export class GitService {
     this.invalidateCache();
   }
 
-  async createBranch(newBranchName: string, startPoint: string): Promise<void> {
-    await this.execGit(["branch", newBranchName, startPoint]);
+  async createBranch(
+    newBranchName: string,
+    startPoint: string,
+    force = false,
+  ): Promise<void> {
+    const args = force
+      ? ["branch", "-f", newBranchName, startPoint]
+      : ["branch", newBranchName, startPoint];
+    await this.execGit(args);
     this.invalidateCache();
   }
 
@@ -601,8 +608,12 @@ export class GitService {
   async createBranchFromCommit(
     branchName: string,
     hash: string,
+    force = false,
   ): Promise<void> {
-    await this.execGit(["branch", branchName, hash]);
+    const args = force
+      ? ["branch", "-f", branchName, hash]
+      : ["branch", branchName, hash];
+    await this.execGit(args);
     this.invalidateCache();
   }
 

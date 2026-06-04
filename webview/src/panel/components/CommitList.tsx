@@ -1,5 +1,7 @@
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { bridge } from "../../shared/bridge";
 import { useModifierClickSelection } from "../../shared/hooks/useModifierClickSelection";
 import { usePanelStore } from "../../shared/store/panel-store";
 import type { Commit } from "../../shared/types/git";
@@ -10,6 +12,7 @@ import {
   ROW_HEIGHT,
   type VisibleColumns,
 } from "./CommitRow";
+import { CreateBranchDialog } from "./CreateBranchDialog";
 
 const COLUMN_WIDTH = 16;
 const GRAPH_PADDING = 8;
@@ -48,6 +51,12 @@ export function CommitList({
     x: number;
     y: number;
     commit: Commit;
+  } | null>(null);
+
+  // Create branch dialog state (triggered from commit context menu)
+  const [createBranchDialog, setCreateBranchDialog] = useState<{
+    hash: string;
+    shortHash: string;
   } | null>(null);
 
   const handleContextMenu = useCallback(
@@ -385,8 +394,42 @@ export function CommitList({
             y={contextMenu.y}
             commit={contextMenu.commit}
             onClose={closeContextMenu}
+            onCreateBranch={(hash, _defaultName) => {
+              closeContextMenu();
+              const shortHash = hash.slice(0, 8);
+              setCreateBranchDialog({ hash, shortHash });
+            }}
           />
         )}
+        {createBranchDialog &&
+          createPortal(
+            <CreateBranchDialog
+              title={`Create Branch from ${createBranchDialog.shortHash}`}
+              defaultName=""
+              placeholder="branch-name"
+              onClose={() => setCreateBranchDialog(null)}
+              onConfirm={async ({ branchName, checkout, force }) => {
+                const hash = createBranchDialog.hash;
+                try {
+                  await bridge.request("createBranchFromCommit", {
+                    branchName,
+                    hash,
+                    checkout,
+                    force,
+                  });
+                  setCreateBranchDialog(null);
+                  return undefined;
+                } catch (err) {
+                  const msg = err instanceof Error ? err.message : String(err);
+                  const match = msg.match(/fatal:\s*(.+)/);
+                  return match
+                    ? match[1]
+                    : `Branch '${branchName}' already exists.\nChange the name or overwrite existing branch.`;
+                }
+              }}
+            />,
+            document.body,
+          )}
       </div>
     </div>
   );

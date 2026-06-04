@@ -6,8 +6,10 @@ import { usePanelStore } from "../../shared/store/panel-store";
 
 export function BranchSidebar({
   onTogglePanel,
+  onNewBranch,
 }: {
   onTogglePanel?: () => void;
+  onNewBranch?: () => void;
 } = {}) {
   const selectedBranches = usePanelStore((s) => s.selectedBranches);
   const selectedBranch =
@@ -18,8 +20,12 @@ export function BranchSidebar({
   );
 
   const handleNewBranch = useCallback(() => {
-    bridge.request("createBranchPrompt");
-  }, []);
+    if (onNewBranch) {
+      onNewBranch();
+    } else {
+      bridge.request("createBranchPrompt", {});
+    }
+  }, [onNewBranch]);
 
   const handleUpdateSelected = useCallback(() => {
     if (selectedBranch) {

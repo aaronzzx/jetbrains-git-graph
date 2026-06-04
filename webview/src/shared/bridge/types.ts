@@ -48,6 +48,7 @@ export type CommandType =
   | "openFile"
   | "checkoutBranch"
   | "createBranch"
+  | "createBranchFromCommit"
   | "deleteBranch"
   | "renameBranch"
   | "mergeBranch"

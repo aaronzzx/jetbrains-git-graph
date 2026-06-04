@@ -482,7 +482,12 @@ export function activate(context: vscode.ExtensionContext) {
     if (!gitService) return NOT_GIT_REPO;
     const newBranchName = params.newBranchName as string;
     const startPoint = params.startPoint as string;
-    await gitService.createBranch(newBranchName, startPoint);
+    const checkout = params.checkout as boolean | undefined;
+    const force = params.force as boolean | undefined;
+    await gitService.createBranch(newBranchName, startPoint, force ?? false);
+    if (checkout) {
+      await gitService.checkout(newBranchName);
+    }
     messageRouter.broadcastEvent("gitStateChanged", { scope: "all" });
     return { success: true };
   });
@@ -632,7 +637,12 @@ export function activate(context: vscode.ExtensionContext) {
     if (!gitService) return NOT_GIT_REPO;
     const branchName = params.branchName as string;
     const hash = params.hash as string;
-    await gitService.createBranchFromCommit(branchName, hash);
+    const checkout = params.checkout as boolean | undefined;
+    const force = params.force as boolean | undefined;
+    await gitService.createBranchFromCommit(branchName, hash, force ?? false);
+    if (checkout) {
+      await gitService.checkout(branchName);
+    }
     messageRouter.broadcastEvent("gitStateChanged", { scope: "all" });
     return { success: true };
   });
@@ -1159,15 +1169,17 @@ export function activate(context: vscode.ExtensionContext) {
 
   // ─── Branch Sidebar Actions ─────────────────────────────────────────
 
-  messageRouter.handle("createBranchPrompt", async () => {
+  messageRouter.handle("createBranchPrompt", async (params) => {
     if (!gitService) return NOT_GIT_REPO;
-    const name = await vscode.window.showInputBox({
-      prompt: "Enter new branch name",
-      placeHolder: "feature/my-branch",
-    });
+    const name = params.branchName as string | undefined;
+    const checkout = params.checkout as boolean | undefined;
+    const force = params.force as boolean | undefined;
     if (!name) return { success: false };
     return withProgress(messageRouter, async () => {
-      await gitService.createBranch(name, "HEAD");
+      await gitService.createBranch(name, "HEAD", force ?? false);
+      if (checkout) {
+        await gitService.checkout(name);
+      }
       messageRouter.broadcastEvent("gitStateChanged", { scope: "all" });
       return { success: true };
     });
