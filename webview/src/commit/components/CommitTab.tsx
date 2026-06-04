@@ -111,6 +111,14 @@ export function CommitTab() {
           bridge.request("refreshGitState");
         }}
         onShelve={handleShelveSelected}
+        onRollback={() => {
+          const paths = changes
+            .filter((f) => selectedFiles.has(`${f.path}:${f.staged}`))
+            .map((f) => f.path);
+          if (paths.length > 0) {
+            bridge.request("rollbackFiles", { filePaths: paths });
+          }
+        }}
         hasChanges={changes.length > 0}
       />
 
