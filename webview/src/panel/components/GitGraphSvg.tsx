@@ -11,14 +11,14 @@ const ROW_HEIGHT = 28;
 const GRAPH_PADDING = 6;
 const VISIBLE_OVERSCAN = 8;
 const LANE_COLORS = [
-  "#0085d9",
-  "#d9008f",
-  "#00d90a",
-  "#d98500",
-  "#a000d9",
-  "#00d9d9",
-  "#d94600",
-  "#7bd900",
+  "#3a8ee6", // blue – primary branch (IDEA blue)
+  "#c75450", // red – merge/feature branch
+  "#59a869", // green – secondary branch
+  "#e5c07b", // golden yellow
+  "#b07cd8", // purple/violet
+  "#2aa198", // teal/cyan
+  "#d19a66", // warm orange
+  "#56b6c2", // light teal
 ];
 
 function laneColor(colorIdx: number): string {
@@ -46,9 +46,24 @@ function linePath(
   if (isStub) {
     return `M ${fromX} ${fromY} L ${toX} ${toY}`;
   }
-  const deltaY = toY - fromY;
-  const bendY = toY - Math.sign(deltaY || 1) * ROW_HEIGHT * 0.65;
-  return `M ${fromX} ${fromY} C ${fromX} ${bendY}, ${toX} ${fromY + ROW_HEIGHT * 0.35}, ${toX} ${toY}`;
+  // IDEA-style: vertical → diagonal (one row height) → vertical
+  // The diagonal segment spans one ROW_HEIGHT vertically while shifting columns.
+  const diagonalH = ROW_HEIGHT; // vertical extent of the diagonal segment
+  const totalDeltaY = toY - fromY;
+
+  if (totalDeltaY <= diagonalH) {
+    // Not enough vertical space for full pattern – just draw a straight diagonal
+    return `M ${fromX} ${fromY} L ${toX} ${toY}`;
+  }
+
+  if (toX > fromX) {
+    // Branching out (rightward): diagonal starts at the top (near source)
+    const diagEndY = fromY + diagonalH;
+    return `M ${fromX} ${fromY} L ${toX} ${diagEndY} L ${toX} ${toY}`;
+  }
+  // Merging in (leftward): diagonal ends at the bottom (near target)
+  const diagStartY = toY - diagonalH;
+  return `M ${fromX} ${fromY} L ${fromX} ${diagStartY} L ${toX} ${toY}`;
 }
 
 /**
@@ -203,9 +218,11 @@ function computeCollapsibleSequences(
 export function GitGraphSvg({
   scrollTop,
   height,
+  topOffset = 0,
 }: {
   scrollTop: number;
   height: number;
+  topOffset?: number;
 }) {
   const visibleCommits = usePanelStore((s) => s.visibleCommits);
   const commits = usePanelStore((s) => s.commits);
@@ -299,11 +316,17 @@ export function GitGraphSvg({
               visibleSet,
               graphLayout,
             );
-            if (!resolved) continue;
-            if (resolved !== targetHash) wasResolved = true;
-            targetHash = resolved;
-            targetIdx = rowIndexByHash[targetHash];
-            if (targetIdx == null) continue;
+            if (!resolved) {
+              // Target not in visible set at all — draw a stub downward
+              isStub = true;
+            } else {
+              if (resolved !== targetHash) wasResolved = true;
+              targetHash = resolved;
+              targetIdx = rowIndexByHash[targetHash];
+              if (targetIdx == null) {
+                isStub = true;
+              }
+            }
           } else {
             isStub = true;
           }
@@ -326,11 +349,16 @@ export function GitGraphSvg({
         let isDashed = false;
 
         if (isStub) {
-          toY = fromY + ROW_HEIGHT * 0.75;
-          const dx = toX - fromX;
-          toX =
-            fromX + Math.sign(dx) * Math.min(Math.abs(dx), COLUMN_WIDTH * 0.5);
-          isDashed = true;
+          toY = fromY + ROW_HEIGHT;
+          if (!isStraight) {
+            const dx = toX - fromX;
+            toX =
+              fromX +
+              Math.sign(dx) * Math.min(Math.abs(dx), COLUMN_WIDTH * 0.5);
+          } else {
+            toX = fromX;
+          }
+          isDashed = false;
         } else {
           toY = rowY(targetIdx as number);
           if (wasResolved) {
@@ -399,6 +427,8 @@ export function GitGraphSvg({
         fromHash: line.fromHash,
         targetHash: line.targetHash,
         sequenceId: line.sequenceId,
+        toX: line.toX,
+        toY: line.toY,
       }));
 
     const nodes = allNodes.filter(
@@ -415,7 +445,7 @@ export function GitGraphSvg({
       viewBox={`0 0 ${svgWidth} ${height}`}
       style={{
         position: "absolute",
-        top: 0,
+        top: topOffset,
         left: 0,
         pointerEvents: "none",
         zIndex: 2,
@@ -469,9 +499,17 @@ export function GitGraphSvg({
                 strokeWidth={1.2}
                 strokeLinejoin="round"
                 strokeLinecap="round"
-                strokeDasharray={line.isDashed ? "4,2" : undefined}
-                opacity={line.isStub ? 0.5 : 1}
+                strokeDasharray={
+                  line.isDashed && !line.isStub ? "4,2" : undefined
+                }
+                opacity={1}
               />
+              {line.isStub && (
+                <polygon
+                  points={`${line.toX - 2.5},${line.toY - 4} ${line.toX},${line.toY} ${line.toX + 2.5},${line.toY - 4}`}
+                  fill={line.color}
+                />
+              )}
               <path
                 className="graph-line-hitbox"
                 d={line.d}

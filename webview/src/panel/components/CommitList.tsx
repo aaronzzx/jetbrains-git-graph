@@ -25,8 +25,10 @@ const DEFAULT_COLUMN_WIDTHS: ColumnWidths = {
 
 export function CommitList({
   onScroll,
+  onHeaderHeight,
 }: {
   onScroll?: (scrollTop: number) => void;
+  onHeaderHeight?: (height: number) => void;
 }) {
   const visibleCommits = usePanelStore((s) => s.visibleCommits);
   const graphLayout = usePanelStore((s) => s.graphLayout);
@@ -100,9 +102,14 @@ export function CommitList({
 
       for (const line of lane.lines) {
         const toRow = rowIndex[line.toCommit];
-        if (toRow == null) continue;
-
         const maxCol = Math.max(lane.column, line.toColumn, line.fromColumn);
+
+        if (toRow == null) {
+          // Stub line: mark the source row itself (already done in init)
+          // No additional rows to mark since stub only extends slightly
+          continue;
+        }
+
         const startRow = Math.min(fromRow, toRow);
         const endRow = Math.max(fromRow, toRow);
 
@@ -113,6 +120,44 @@ export function CommitList({
             result[hash] = maxCol;
           }
         }
+      }
+    }
+
+    // Second pass: ensure each row's maxColumn is at least as large as
+    // any lane that is still "active" (passing through) at that row.
+    // We do this by propagating: if row N has a commit in column C whose
+    // parent is beyond visible range, and there's no line to mark below,
+    // the next row should still account for that lane passing through.
+    // Simple approach: scan top-to-bottom, track active columns.
+    const activeColumns = new Set<number>();
+    for (let i = 0; i < visibleCommits.length; i++) {
+      const hash = visibleCommits[i].hash;
+      const lane = graphLayout[hash];
+      if (!lane) continue;
+
+      // This commit occupies its column
+      activeColumns.add(lane.column);
+
+      // If any of its lines connect to a visible target, that lane
+      // ends (for the purpose of passing through) at the target row.
+      // Lines going to non-visible targets keep the lane "active" indefinitely
+      // within our loaded range — but we already handle that via the stub.
+      // The key fix: ensure this row accounts for all active columns.
+      const maxActive = activeColumns.size > 0 ? Math.max(...activeColumns) : 0;
+      if ((result[hash] ?? 0) < maxActive) {
+        result[hash] = maxActive;
+      }
+
+      // Remove columns whose lines terminate at this row
+      // (this commit is the target of a line from above)
+      // We detect this: if this commit's hash appears as toCommit
+      // for a lane in the row above it, and the column differs, then
+      // the fork/merge lane ends here.
+      // Simplified: just remove this commit's column if it has no
+      // lines going further down (i.e., no parents in visible range and
+      // no stub needed because it's a root)
+      if (lane.lines.length === 0) {
+        activeColumns.delete(lane.column);
       }
     }
 
@@ -209,6 +254,15 @@ export function CommitList({
     return () => el.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
+  useEffect(() => {
+    const el = parentRef.current;
+    if (!el) return;
+    // Report header height = offset of scroll area from container top
+    if (onHeaderHeight && el.parentElement) {
+      onHeaderHeight(el.offsetTop);
+    }
+  }, [onHeaderHeight]);
+
   // Resize handlers using startX approach for stable dragging
   const [resizing, setResizing] = useState<string | null>(null);
 
@@ -273,6 +327,9 @@ export function CommitList({
           opacity: 0.6,
           flexShrink: 0,
           userSelect: "none",
+          position: "relative",
+          zIndex: 3,
+          background: "var(--app-bg, #1e1e1e)",
         }}
       >
         <span style={{ flex: 1, paddingRight: 4 }}>Message</span>

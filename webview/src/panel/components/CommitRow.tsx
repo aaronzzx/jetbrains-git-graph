@@ -11,9 +11,9 @@ const NODE_TEXT_GAP = 14;
 /** Tag icon colors matching IDEA */
 const REF_ICON_COLORS: Record<string, string> = {
   branch: "#59a869",
-  "remote-branch": "#9b7dd4",
-  tag: "#c4a000",
-  HEAD: "#e06c75",
+  "remote-branch": "#b07cd8",
+  tag: "#e5c07b",
+  HEAD: "#c75450",
 };
 
 function formatDateTime(dateStr: string): string {

@@ -752,6 +752,7 @@ function TreeNodeView({
         onDoubleClick={() => onBranchDoubleClick(branch.name)}
         onContextMenu={(e) => onBranchContextMenu(e, branch)}
         depth={depth}
+        ahead={branch.ahead}
         behind={branch.behind}
       />
     );
@@ -918,6 +919,7 @@ function BranchItem({
   onDoubleClick,
   onContextMenu,
   depth,
+  ahead = 0,
   behind = 0,
 }: {
   icon: React.ReactNode;
@@ -929,6 +931,7 @@ function BranchItem({
   onDoubleClick: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
   depth: number;
+  ahead?: number;
   behind?: number;
 }) {
   return (
@@ -965,17 +968,28 @@ function BranchItem({
           {name}
         </span>
       </Tooltip>
-      {behind > 0 && (
+      {(ahead > 0 || behind > 0) && (
         <span
           style={{
-            color: "var(--link-fg, #1a73e8)",
             marginLeft: 4,
             flexShrink: 0,
             whiteSpace: "nowrap",
             fontSize: "0.85em",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
           }}
         >
-          ↙ {behind}
+          {behind > 0 && (
+            <span style={{ color: "#3574f0" }}>
+              ↙ {behind > 99 ? "99+" : behind}
+            </span>
+          )}
+          {ahead > 0 && (
+            <span style={{ color: "#499c54" }}>
+              ↗ {ahead > 99 ? "99+" : ahead}
+            </span>
+          )}
         </span>
       )}
     </div>

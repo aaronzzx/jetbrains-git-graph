@@ -79,7 +79,11 @@ export class GitService {
       return cached;
     }
 
-    const args = ["log", `--format=${LOG_FORMAT}${FMT_RECORD_SEP}`];
+    const args = [
+      "log",
+      `--format=${LOG_FORMAT}${FMT_RECORD_SEP}`,
+      "--date-order",
+    ];
 
     if (options.maxCount) {
       args.push(`--max-count=${options.maxCount}`);
