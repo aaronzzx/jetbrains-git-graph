@@ -561,6 +561,35 @@ export class GitService {
     this.invalidateCache();
   }
 
+  /**
+   * Get commits that are ahead of the remote tracking branch.
+   * Returns commits in newest-first order.
+   */
+  async getAheadCommits(branchName: string): Promise<CommitNode[]> {
+    const upstream = `origin/${branchName}`;
+    // Check if upstream exists
+    try {
+      await this.execGit(["rev-parse", "--verify", upstream]);
+    } catch {
+      // No upstream — all local commits are "ahead"
+      const args = [
+        "log",
+        `--format=${LOG_FORMAT}${FMT_RECORD_SEP}`,
+        branchName,
+        "--max-count=50",
+      ];
+      const output = await this.execGit(args);
+      return parseLogOutput(output);
+    }
+    const args = [
+      "log",
+      `--format=${LOG_FORMAT}${FMT_RECORD_SEP}`,
+      `${upstream}..${branchName}`,
+    ];
+    const output = await this.execGit(args);
+    return parseLogOutput(output);
+  }
+
   async pull(branchName?: string): Promise<void> {
     const args = ["pull"];
     if (branchName) {

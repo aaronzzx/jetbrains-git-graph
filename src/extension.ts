@@ -12,6 +12,7 @@ import {
 } from "./views/gitContentProvider";
 import { GitLogViewProvider } from "./views/gitLogViewProvider";
 import { MergeEditorManager } from "./views/mergeEditorManager";
+import { PushPanel } from "./views/pushPanel";
 import { GitWatcher } from "./watchers/gitWatcher";
 
 const NOT_GIT_REPO = { status: "not_git_repo" as const, data: null };
@@ -99,6 +100,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.extensionUri,
     messageRouter,
   );
+
+  // 4. PushPanel
+  const pushPanel = new PushPanel(context.extensionUri, messageRouter);
 
   // 5. Register VSCode commands (always registered)
   context.subscriptions.push(
@@ -555,6 +559,34 @@ export function activate(context: vscode.ExtensionContext) {
       messageRouter.broadcastEvent("gitStateChanged", { scope: "all" });
       return { success: true };
     });
+  });
+
+  messageRouter.handle("getAheadCommits", async (params) => {
+    if (!gitService) return NOT_GIT_REPO;
+    const branchName = params.branchName as string;
+    const commits = await gitService.getAheadCommits(branchName);
+    return { commits };
+  });
+
+  messageRouter.handle("executePush", async (params) => {
+    if (!gitService) return NOT_GIT_REPO;
+    const branchName = params.branchName as string;
+    const force = params.force as boolean | undefined;
+    return withProgress(messageRouter, async () => {
+      await gitService.push(branchName, force ?? false);
+      pushPanel.close();
+      messageRouter.broadcastEvent("gitStateChanged", { scope: "all" });
+      messageRouter.broadcastEvent("commitStateChanged", {});
+      return { success: true };
+    });
+  });
+
+  messageRouter.handle("openPushPanel", async () => {
+    if (!gitService) return NOT_GIT_REPO;
+    const branch = await gitService.getCurrentBranch();
+    if (!branch) return { error: "No current branch" };
+    pushPanel.open(branch);
+    return { success: true };
   });
 
   messageRouter.handle("pullBranch", async (params) => {

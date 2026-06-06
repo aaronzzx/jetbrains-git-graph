@@ -96,7 +96,11 @@ export type CommandType =
   | "navigateToHead"
   | "toggleBranchGroupByDirectory"
   | "setSingleClickAction"
-  | "toggleShowTags";
+  | "toggleShowTags"
+  | "getAheadCommits"
+  | "getCommitRangeFiles"
+  | "executePush"
+  | "openPushPanel";
 
 export interface Bridge {
   request(

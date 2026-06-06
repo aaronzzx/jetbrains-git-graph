@@ -4,6 +4,7 @@ import { CommitApp } from "./commit/App";
 import { ConflictsApp } from "./conflicts/App";
 import { MergeStandaloneApp } from "./conflicts/MergeStandaloneApp";
 import { PanelApp } from "./panel/App";
+import { PushApp } from "./push/App";
 import "./shared/theme/variables.css";
 
 // Fix Cmd+A/Ctrl+A not working in webview inputs (VS Code intercepts it)
@@ -24,6 +25,7 @@ const mode = root.dataset.mode as
   | "merge"
   | "conflicts"
   | "commit"
+  | "push"
   | undefined;
 
 createRoot(root).render(
@@ -34,6 +36,8 @@ createRoot(root).render(
       <ConflictsApp />
     ) : mode === "commit" ? (
       <CommitApp />
+    ) : mode === "push" ? (
+      <PushApp />
     ) : (
       <PanelApp />
     )}

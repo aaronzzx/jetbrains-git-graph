@@ -1,0 +1,160 @@
+.push-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-size: 13px;
+  color: var(--app-fg, #ccc);
+  background: var(--app-bg, #1e1e1e);
+}
+
+.push-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border, #333);
+  font-size: 13px;
+}
+
+.push-route {
+  opacity: 0.9;
+}
+
+.push-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.push-commits {
+  width: 40%;
+  min-width: 200px;
+  border-right: 1px solid var(--border, #333);
+  overflow-y: auto;
+}
+
+.push-commit-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.push-commit-item:hover {
+  background: var(--list-hoverBackground, rgba(255, 255, 255, 0.04));
+}
+
+.push-commit-item.selected {
+  background: var(--selected-bg, #094771);
+  color: var(--selected-fg, #fff);
+}
+
+.push-commit-subject {
+  font-size: 13px;
+}
+
+.push-empty {
+  padding: 24px;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.push-detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.push-files {
+  flex: 1;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--border, #333);
+}
+
+.push-files-header {
+  padding: 8px 12px;
+  font-size: 12px;
+  opacity: 0.6;
+  border-bottom: 1px solid var(--border, #333);
+}
+
+.push-file-item {
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: default;
+}
+
+.push-file-item:hover {
+  background: var(--list-hoverBackground, rgba(255, 255, 255, 0.04));
+}
+
+.push-file-name {
+  font-weight: 500;
+}
+
+.push-file-path {
+  opacity: 0.5;
+  font-size: 12px;
+}
+
+.push-commit-info {
+  padding: 16px;
+  min-height: 80px;
+}
+
+.push-commit-message {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.push-commit-meta {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.push-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border, #333);
+}
+
+.push-error {
+  color: #f44747;
+  font-size: 12px;
+}
+
+.push-btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.push-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.push-btn-primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.push-btn-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.push-btn-secondary {
+  background: transparent;
+  color: var(--app-fg, #ccc);
+  border: 1px solid var(--border, #555);
+}
+
+.push-btn-secondary:hover:not(:disabled) {
+  background: var(--list-hoverBackground, rgba(255, 255, 255, 0.06));
+}
