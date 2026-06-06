@@ -86,6 +86,7 @@ export function Toolbar({
         <button
           type="button"
           className="commit-toolbar-btn"
+          style={{ opacity: 1 }}
           onClick={() => bridge.request("pullBranch", {})}
         >
           <PullIcon />
@@ -95,6 +96,7 @@ export function Toolbar({
         <button
           type="button"
           className="commit-toolbar-btn"
+          style={{ opacity: 1 }}
           onClick={() => bridge.request("openPushPanel")}
         >
           <PushIcon />
