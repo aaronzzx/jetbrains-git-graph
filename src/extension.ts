@@ -106,6 +106,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   // 5. Register VSCode commands (always registered)
   context.subscriptions.push(
+    vscode.commands.registerCommand("git-brains.openPushPanel", async () => {
+      if (!gitService) return;
+      const branch = await gitService.getCurrentBranch();
+      if (branch) {
+        pushPanel.open(branch);
+      }
+    }),
     vscode.commands.registerCommand(
       "git-brains.openMergeEditor",
       (file?: string) => {

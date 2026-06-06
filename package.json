@@ -144,6 +144,12 @@
         "title": "Unshelve Changes",
         "icon": "$(package)",
         "category": "JetGit"
+      },
+      {
+        "command": "git-brains.openPushPanel",
+        "title": "Push...",
+        "icon": "$(cloud-upload)",
+        "category": "JetGit"
       }
     ],
     "menus": {
@@ -178,6 +184,11 @@
       ]
     },
     "keybindings": [
+      {
+        "command": "git-brains.openPushPanel",
+        "key": "ctrl+shift+k",
+        "mac": "cmd+shift+k"
+      },
       {
         "command": "git-brains.nextDiff",
         "key": "ctrl+f7",
