@@ -85,6 +85,7 @@ export type CommandType =
   | "rebaseAction"
   | "mergeAction"
   | "showErrorNotification"
+  | "showInfoNotification"
   | "openConflictsPanel"
   | "importPatchFromClipboard"
   | "createBranchPrompt"

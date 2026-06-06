@@ -487,6 +487,18 @@ export function activate(context: vscode.ExtensionContext) {
     return { confirmed: result === confirmLabel };
   });
 
+  messageRouter.handle("showErrorNotification", async (params) => {
+    const message = params.message as string;
+    void vscode.window.showErrorMessage(message);
+    return { success: true };
+  });
+
+  messageRouter.handle("showInfoNotification", async (params) => {
+    const message = params.message as string;
+    void vscode.window.showInformationMessage(message);
+    return { success: true };
+  });
+
   messageRouter.handle("checkoutBranch", async (params) => {
     if (!gitService) return NOT_GIT_REPO;
     const branchName = params.branchName as string;

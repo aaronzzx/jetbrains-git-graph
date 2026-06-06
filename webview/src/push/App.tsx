@@ -20,11 +20,6 @@ interface DiffFile {
   status: string;
 }
 
-type ToastState =
-  | { type: "success"; message: string }
-  | { type: "error"; message: string }
-  | null;
-
 export function PushApp() {
   const root = document.getElementById("root");
   const branchName = root?.dataset.branch ?? "";
@@ -36,7 +31,6 @@ export function PushApp() {
   const [pushing, setPushing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPushMenu, setShowPushMenu] = useState(false);
-  const [toast, setToast] = useState<ToastState>(null);
 
   // Editable remote branch target state
   const [targetRemote, setTargetRemote] = useState(remoteName);
@@ -88,7 +82,6 @@ export function PushApp() {
     async (force = false) => {
       setPushing(true);
       setError(null);
-      setToast(null);
       try {
         const result = (await bridge.request("executePush", {
           branchName,
@@ -101,18 +94,18 @@ export function PushApp() {
         const message = isUpToDate
           ? "Everything is up to date"
           : `Pushed ${commits.length} commit${commits.length !== 1 ? "s" : ""} to ${targetRemote}/${targetBranch}`;
-        setToast({ type: "success", message });
-        // Auto-close panel after showing toast
+        // Show VS Code native notification then close
+        bridge.request("showInfoNotification", { message }).catch(() => {});
         setTimeout(() => {
           bridge.request("closePushPanel");
-        }, 2500);
+        }, 500);
       } catch (err) {
         setPushing(false);
         const msg = err instanceof Error ? err.message : String(err);
         setError(msg);
-        setToast({ type: "error", message: msg });
-        // Auto-dismiss error toast after 5 seconds
-        setTimeout(() => setToast(null), 5000);
+        bridge
+          .request("showErrorNotification", { message: msg })
+          .catch(() => {});
       }
     },
     [branchName, targetRemote, targetBranch, commits.length],
@@ -329,23 +322,6 @@ export function PushApp() {
       {pushing && (
         <div className="push-progress-bar">
           <div className="push-progress-bar__track" />
-        </div>
-      )}
-
-      {/* Toast notification */}
-      {toast && (
-        <div className={`push-toast push-toast--${toast.type}`}>
-          <span className="push-toast__icon">
-            {toast.type === "success" ? "ℹ️" : "❌"}
-          </span>
-          <span className="push-toast__message">{toast.message}</span>
-          <button
-            type="button"
-            className="push-toast__close"
-            onClick={() => setToast(null)}
-          >
-            ×
-          </button>
         </div>
       )}
     </div>
