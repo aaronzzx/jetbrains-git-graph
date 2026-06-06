@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { bridge } from "../../shared/bridge";
 import { Tooltip } from "../../shared/components/Tooltip";
 import "../../shared/components/Tooltip.css";
 import { useCommitStore } from "../../shared/store/commit-store";
@@ -79,6 +80,24 @@ export function Toolbar({
           disabled={!hasChanges}
         >
           <DiffIcon />
+        </button>
+      </Tooltip>
+      <Tooltip text="Push...">
+        <button
+          type="button"
+          className="commit-toolbar-btn"
+          onClick={() => bridge.request("openPushPanel")}
+        >
+          <PushIcon />
+        </button>
+      </Tooltip>
+      <Tooltip text="Pull">
+        <button
+          type="button"
+          className="commit-toolbar-btn"
+          onClick={() => bridge.request("pullBranch", {})}
+        >
+          <PullIcon />
         </button>
       </Tooltip>
 
@@ -324,6 +343,38 @@ function CollapseAllIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+    </svg>
+  );
+}
+
+/** Push icon — arrow pointing up to cloud */
+function PushIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 12V3.5" stroke="currentColor" strokeLinecap="round" />
+      <path
+        d="M5 5.5L8 2.5L11 5.5"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M3 13.5H13" stroke="currentColor" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Pull icon — arrow pointing down from cloud */
+function PullIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 2.5V11" stroke="currentColor" strokeLinecap="round" />
+      <path
+        d="M5 9L8 12L11 9"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M3 13.5H13" stroke="currentColor" strokeLinecap="round" />
     </svg>
   );
 }
