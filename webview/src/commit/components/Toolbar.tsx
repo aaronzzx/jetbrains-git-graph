@@ -349,44 +349,20 @@ function CollapseAllIcon() {
   );
 }
 
-/** Push icon — green ↗ arrow matching branch ahead indicator */
+/** Push icon — green ↗ text matching branch ahead indicator */
 function PushIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path
-        d="M4 12L12 4"
-        stroke="#499c54"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M6 4H12V10"
-        stroke="#499c54"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <span style={{ color: "#499c54", fontSize: "16px", fontWeight: 700 }}>
+      ↗
+    </span>
   );
 }
 
-/** Pull icon — blue ↙ arrow matching branch behind indicator */
+/** Pull icon — blue ↙ text matching branch behind indicator */
 function PullIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path
-        d="M12 4L4 12"
-        stroke="#3574f0"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M10 12H4V6"
-        stroke="#3574f0"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <span style={{ color: "#3574f0", fontSize: "16px", fontWeight: 700 }}>
+      ↙
+    </span>
   );
 }
