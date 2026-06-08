@@ -185,6 +185,55 @@ export function activate(context: vscode.ExtensionContext) {
         });
       },
     ),
+    vscode.commands.registerCommand("git-brains.editSource", async () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) return;
+
+      const uri = editor.document.uri;
+      const line = editor.selection.active.line;
+      const character = editor.selection.active.character;
+
+      // Resolve the actual workspace file path from diff URI
+      // Diff URIs use schemes like "git" or "git-brains-git" with the file path in query/path
+      let filePath: string | undefined;
+
+      if (uri.scheme === "file") {
+        // Already a regular file
+        filePath = uri.fsPath;
+      } else {
+        // Git diff URI — extract the file path
+        // Common patterns: git:/path?{...} or git-brains-git:/path?{...}
+        const queryStr = uri.query;
+        if (queryStr) {
+          try {
+            const query = JSON.parse(queryStr);
+            filePath = query.path || query.filePath;
+          } catch {
+            // fallback: use URI path directly
+            filePath = uri.path;
+          }
+        } else {
+          filePath = uri.path;
+        }
+
+        // Make it absolute if relative
+        if (filePath && !filePath.startsWith("/") && workspaceRoot) {
+          filePath = vscode.Uri.joinPath(
+            vscode.Uri.file(workspaceRoot),
+            filePath,
+          ).fsPath;
+        }
+      }
+
+      if (!filePath) return;
+
+      const fileUri = vscode.Uri.file(filePath);
+      const doc = await vscode.workspace.openTextDocument(fileUri);
+      await vscode.window.showTextDocument(doc, {
+        selection: new vscode.Range(line, character, line, character),
+        preview: false,
+      });
+    }),
   );
 
   // 6. Register command handlers to MessageRouter
