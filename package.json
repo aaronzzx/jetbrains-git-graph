@@ -182,7 +182,7 @@
         },
         {
           "command": "git-brains.editSource",
-          "when": "isInDiffEditor",
+          "when": "isInDiffEditor && resourceScheme != file",
           "group": "git@2"
         }
       ],

@@ -194,40 +194,48 @@ export function activate(context: vscode.ExtensionContext) {
       const character = editor.selection.active.character;
 
       // Resolve the actual workspace file path from diff URI
-      // Diff URIs use schemes like "git" or "git-brains-git" with the file path in query/path
+      // Format: git-brains:/<relativePath>?ref=<commitHash>
       let filePath: string | undefined;
 
       if (uri.scheme === "file") {
-        // Already a regular file
         filePath = uri.fsPath;
-      } else {
-        // Git diff URI — extract the file path
-        // Common patterns: git:/path?{...} or git-brains-git:/path?{...}
-        const queryStr = uri.query;
-        if (queryStr) {
-          try {
-            const query = JSON.parse(queryStr);
-            filePath = query.path || query.filePath;
-          } catch {
-            // fallback: use URI path directly
-            filePath = uri.path;
-          }
-        } else {
-          filePath = uri.path;
-        }
-
-        // Make it absolute if relative
-        if (filePath && !filePath.startsWith("/") && workspaceRoot) {
+      } else if (uri.scheme === "git-brains" || uri.scheme === "git") {
+        // Extract relative path from URI path (strip leading /)
+        const relativePath = uri.path.startsWith("/")
+          ? uri.path.slice(1)
+          : uri.path;
+        if (relativePath && workspaceRoot) {
           filePath = vscode.Uri.joinPath(
             vscode.Uri.file(workspaceRoot),
-            filePath,
+            relativePath,
+          ).fsPath;
+        }
+      } else {
+        // Other schemes (e.g. vscode builtin git) — try path
+        const relativePath = uri.path.startsWith("/")
+          ? uri.path.slice(1)
+          : uri.path;
+        if (relativePath && workspaceRoot) {
+          filePath = vscode.Uri.joinPath(
+            vscode.Uri.file(workspaceRoot),
+            relativePath,
           ).fsPath;
         }
       }
 
       if (!filePath) return;
 
+      // Check if file exists before opening
       const fileUri = vscode.Uri.file(filePath);
+      try {
+        await vscode.workspace.fs.stat(fileUri);
+      } catch {
+        void vscode.window.showWarningMessage(
+          "Source file does not exist in the working directory.",
+        );
+        return;
+      }
+
       const doc = await vscode.workspace.openTextDocument(fileUri);
       await vscode.window.showTextDocument(doc, {
         selection: new vscode.Range(line, character, line, character),
