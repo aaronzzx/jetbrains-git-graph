@@ -108,12 +108,33 @@ function buildRefDisplayItems(refs: RefInfo[]): Array<{
 
   // Render branch/remote tags
   for (const name of displayNames) {
-    const isRemote = name.includes("/") || name.includes(" & ");
-    result.push({
-      key: `branch:${name}`,
-      type: isRemote ? "remote-branch" : "branch",
-      label: name,
-    });
+    const isMerged = name.includes(" & ");
+    const isRemote = name.includes("/");
+    if (isMerged) {
+      // Merged label like "origin & main" needs both remote + local icons
+      result.push({
+        key: `remote:${name}`,
+        type: "remote-branch",
+        label: "",
+      });
+      result.push({
+        key: `branch:${name}`,
+        type: "branch",
+        label: name,
+      });
+    } else if (isRemote) {
+      result.push({
+        key: `branch:${name}`,
+        type: "remote-branch",
+        label: name,
+      });
+    } else {
+      result.push({
+        key: `branch:${name}`,
+        type: "branch",
+        label: name,
+      });
+    }
   }
 
   // Tags
@@ -225,8 +246,8 @@ export function CommitRow({
                 style={{
                   display: "inline-flex",
                   position: "relative",
-                  width: 14 + Math.max(0, (refItems.length - 1) * 6),
-                  height: 14,
+                  width: 16 + Math.max(0, (refItems.length - 1) * 5),
+                  height: 16,
                 }}
               >
                 {refItems.map((item, idx) => {
@@ -235,11 +256,11 @@ export function CommitRow({
                   return (
                     <svg
                       key={item.key}
-                      width="14"
-                      height="14"
+                      width="16"
+                      height="16"
                       viewBox="0 0 16 16"
                       fill="none"
-                      style={{ position: "absolute", left: idx * 6, top: 0 }}
+                      style={{ position: "absolute", left: idx * 5, top: 0 }}
                     >
                       <path
                         d="M2.5 3.5C2.5 2.95 2.95 2.5 3.5 2.5H7.09c.27 0 .52.1.71.3l5.41 5.41c.39.39.39 1.02 0 1.41l-3.59 3.59c-.39.39-1.02.39-1.41 0L2.79 7.8a1 1 0 01-.29-.71V3.5z"
