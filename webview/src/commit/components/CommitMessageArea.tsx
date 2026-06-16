@@ -282,8 +282,8 @@ const HistoryDropdown = React.forwardRef<HTMLDivElement, HistoryDropdownProps>(
           left: 4,
           right: 4,
           zIndex: 99999,
-          background: "var(--vscode-menu-background, #fff)",
-          border: "1px solid var(--vscode-menu-border, #e0e0e0)",
+          background: "var(--menu-bg)",
+          border: "1px solid var(--menu-border)",
           borderRadius: 4,
           padding: "4px 0",
           maxHeight: 250,
@@ -313,11 +313,11 @@ const HistoryDropdown = React.forwardRef<HTMLDivElement, HistoryDropdownProps>(
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
-                color: "var(--vscode-menu-foreground, #333)",
+                color: "var(--menu-fg)",
               }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.background =
-                  "var(--vscode-menu-selectionBackground, #e8f0fe)";
+                  "var(--menu-selection-bg)";
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLElement).style.background =

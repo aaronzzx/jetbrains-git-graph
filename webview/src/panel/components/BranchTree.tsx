@@ -501,7 +501,7 @@ export function BranchTree({
                 width: "100%",
                 padding: "4px 24px",
                 fontSize: "12px",
-                border: "1px solid var(--vscode-input-border, #c4c4c4)",
+                border: "1px solid var(--input-border)",
                 background: "var(--vscode-input-background, #1e1e1e)",
                 color: "var(--vscode-input-foreground, #ccc)",
                 borderRadius: 3,
@@ -513,7 +513,7 @@ export function BranchTree({
               }}
               onBlur={(e) => {
                 (e.target as HTMLElement).style.borderColor =
-                  "var(--vscode-input-border, #c4c4c4)";
+                  "var(--input-border)";
               }}
               onMouseEnter={(e) => {
                 (e.target as HTMLElement).style.borderColor = "#3574f0";
@@ -521,7 +521,7 @@ export function BranchTree({
               onMouseLeave={(e) => {
                 if (document.activeElement !== e.target) {
                   (e.target as HTMLElement).style.borderColor =
-                    "var(--vscode-input-border, #c4c4c4)";
+                    "var(--input-border)";
                 }
               }}
             />
@@ -1325,8 +1325,8 @@ function BranchContextMenu({
         top: position ? position.top : -9999,
         left: position ? position.left : -9999,
         zIndex: 9999,
-        background: "var(--vscode-menu-background, #fff)",
-        border: "1px solid var(--vscode-menu-border, #e0e0e0)",
+        background: "var(--menu-bg)",
+        border: "1px solid var(--menu-border)",
         borderRadius: 4,
         padding: "4px 0",
         minWidth: 160,
@@ -1342,7 +1342,7 @@ function BranchContextMenu({
             key={`sep-${i}`}
             style={{
               height: 1,
-              background: "var(--vscode-menu-separatorBackground, #e8e8e8)",
+              background: "var(--menu-separator-bg)",
               margin: "4px 0",
             }}
           />
@@ -1354,22 +1354,21 @@ function BranchContextMenu({
               padding: "6px 16px",
               cursor: item.disabled ? "default" : "pointer",
               opacity: item.disabled ? 0.5 : 1,
-              color: "var(--vscode-menu-foreground, #333)",
+              color: "var(--menu-fg)",
               fontSize: "13px",
               whiteSpace: "nowrap",
             }}
             onMouseEnter={(e) => {
               if (!item.disabled) {
                 (e.currentTarget as HTMLElement).style.background =
-                  "var(--vscode-menu-selectionBackground, #e8f0fe)";
+                  "var(--menu-selection-bg)";
                 (e.currentTarget as HTMLElement).style.color =
-                  "var(--vscode-menu-selectionForeground, #333)";
+                  "var(--menu-selection-fg)";
               }
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.background = "transparent";
-              (e.currentTarget as HTMLElement).style.color =
-                "var(--vscode-menu-foreground, #ccc)";
+              (e.currentTarget as HTMLElement).style.color = "var(--menu-fg)";
             }}
           >
             {item.label}

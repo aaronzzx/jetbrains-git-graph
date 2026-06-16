@@ -357,7 +357,7 @@ function SearchInput({
           width: "100%",
           padding: "4px 24px",
           fontSize: "12px",
-          border: "1px solid var(--vscode-input-border, #c4c4c4)",
+          border: "1px solid var(--input-border)",
           background: "var(--vscode-input-background, #1e1e1e)",
           color: "var(--vscode-input-foreground, #ccc)",
           borderRadius: 3,
@@ -368,16 +368,14 @@ function SearchInput({
           (e.target as HTMLElement).style.borderColor = "#3574f0";
         }}
         onBlur={(e) => {
-          (e.target as HTMLElement).style.borderColor =
-            "var(--vscode-input-border, #c4c4c4)";
+          (e.target as HTMLElement).style.borderColor = "var(--input-border)";
         }}
         onMouseEnter={(e) => {
           (e.target as HTMLElement).style.borderColor = "#3574f0";
         }}
         onMouseLeave={(e) => {
           if (document.activeElement !== e.target) {
-            (e.target as HTMLElement).style.borderColor =
-              "var(--vscode-input-border, #c4c4c4)";
+            (e.target as HTMLElement).style.borderColor = "var(--input-border)";
           }
         }}
       />
@@ -512,27 +510,22 @@ function DropdownItem({
         padding: "5px 12px",
         fontSize: "12px",
         cursor: "pointer",
-        color: active
-          ? "var(--vscode-menu-selectionForeground, #333)"
-          : "var(--vscode-menu-foreground, #ccc)",
-        background: active
-          ? "var(--vscode-menu-selectionBackground, #e8f0fe)"
-          : "transparent",
+        color: active ? "var(--menu-selection-fg)" : "var(--menu-fg)",
+        background: active ? "var(--menu-selection-bg)" : "transparent",
         whiteSpace: "nowrap",
       }}
       onMouseEnter={(e) => {
         if (!active) {
           (e.currentTarget as HTMLElement).style.background =
-            "var(--vscode-menu-selectionBackground, #e8f0fe)";
+            "var(--menu-selection-bg)";
           (e.currentTarget as HTMLElement).style.color =
-            "var(--vscode-menu-selectionForeground, #333)";
+            "var(--menu-selection-fg)";
         }
       }}
       onMouseLeave={(e) => {
         if (!active) {
           (e.currentTarget as HTMLElement).style.background = "transparent";
-          (e.currentTarget as HTMLElement).style.color =
-            "var(--vscode-menu-foreground, #ccc)";
+          (e.currentTarget as HTMLElement).style.color = "var(--menu-fg)";
         }
       }}
     >
@@ -614,8 +607,8 @@ function SearchableDropdown({
         left: 0,
         marginTop: 4,
         zIndex: 9999,
-        background: "var(--vscode-menu-background, #fff)",
-        border: "1px solid var(--vscode-menu-border, #e0e0e0)",
+        background: "var(--menu-bg)",
+        border: "1px solid var(--menu-border)",
         borderRadius: 4,
         padding: "4px 0",
         minWidth: 200,
@@ -639,9 +632,9 @@ function SearchableDropdown({
             width: "100%",
             padding: "4px 8px",
             fontSize: "12px",
-            border: "1px solid var(--vscode-input-border, #c4c4c4)",
-            background: "var(--vscode-input-background, #fff)",
-            color: "var(--vscode-input-foreground, #333)",
+            border: "1px solid var(--input-border)",
+            background: "var(--input-bg)",
+            color: "var(--input-fg)",
             borderRadius: 3,
             outline: "none",
             boxSizing: "border-box",
@@ -650,8 +643,7 @@ function SearchableDropdown({
             (e.target as HTMLElement).style.borderColor = "#3574f0";
           }}
           onBlur={(e) => {
-            (e.target as HTMLElement).style.borderColor =
-              "var(--vscode-input-border, #c4c4c4)";
+            (e.target as HTMLElement).style.borderColor = "var(--input-border)";
           }}
         />
       </div>
@@ -748,8 +740,8 @@ function ViewOptionsDropdown({
         right: 0,
         marginTop: 4,
         zIndex: 9999,
-        background: "var(--vscode-menu-background, #fff)",
-        border: "1px solid var(--vscode-menu-border, #e0e0e0)",
+        background: "var(--menu-bg)",
+        border: "1px solid var(--menu-border)",
         borderRadius: 4,
         padding: "4px 0",
         minWidth: 160,
@@ -777,11 +769,11 @@ function ViewOptionsDropdown({
             padding: "5px 12px",
             fontSize: "12px",
             cursor: "pointer",
-            color: "var(--vscode-menu-foreground, #333)",
+            color: "var(--menu-fg)",
           }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLElement).style.background =
-              "var(--vscode-menu-selectionBackground, #e8f0fe)";
+              "var(--menu-selection-bg)";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLElement).style.background = "transparent";

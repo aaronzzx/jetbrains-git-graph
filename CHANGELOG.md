@@ -1,5 +1,15 @@
 # Changelog / 更新日志
 
+## [1.0.0] - 2026-06-16
+
+### Changed / 变更
+- **Fork identity** — this fork is based on [aotemj/jetbrains-git-graph](https://github.com/aotemj/jetbrains-git-graph), and now uses the extension ID `aaronzzx.jetbrains-git-graph` with version `1.0.0`. / 当前 Fork 基于 [aotemj/jetbrains-git-graph](https://github.com/aotemj/jetbrains-git-graph)，插件 ID 调整为 `aaronzzx.jetbrains-git-graph`，版本号调整为 `1.0.0`。
+- **Repository metadata** — package metadata and README links now point to [aaronzzx/jetbrains-git-graph](https://github.com/aaronzzx/jetbrains-git-graph). / 包元数据和 README 链接指向 [aaronzzx/jetbrains-git-graph](https://github.com/aaronzzx/jetbrains-git-graph)。
+- **Dark-mode readability** — adjusted theme tokens and hard-coded light UI surfaces across the commit panel, file rows, context menus, push/rollback panels, and shared components to better follow VS Code dark themes. / 优化深色模式可读性，将 Commit 面板、文件行、右键菜单、Push/Rollback 面板和共享组件中的浅色硬编码样式尽量改为跟随 VS Code 深色主题。
+
+### Notes / 说明
+- This version does not intentionally change Git command behavior. Checkout, commit, push, pull, merge, rebase, rollback, shelf, stash, and diff workflows should remain aligned with the upstream implementation. / 本版本不主动改变 Git 命令行为；checkout、commit、push、pull、merge、rebase、rollback、shelf、stash、diff 等工作流保持与上游实现一致。
+
 ## [0.4.14] - 2026-06-09
 
 ### Added / 新增

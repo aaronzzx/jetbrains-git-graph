@@ -80,14 +80,14 @@ function RebaseBanner() {
         alignItems: "center",
         gap: 8,
         padding: "6px 12px",
-        background: "#e8f5e9",
-        borderBottom: "1px solid #c8e6c9",
+        background: "var(--success-bg)",
+        borderBottom: "1px solid var(--success-border)",
         fontSize: 12,
         flexShrink: 0,
       }}
     >
       <span style={{ fontSize: 14 }}>⚠️</span>
-      <span style={{ fontWeight: 600, flex: 1, color: "#333" }}>
+      <span style={{ fontWeight: 600, flex: 1, color: "var(--banner-fg)" }}>
         {label}
         {progress}
       </span>
@@ -115,14 +115,14 @@ function RebaseBanner() {
           >
             <path
               d="M2.5 11.5L6 8L2.5 4.5"
-              stroke="#ffffff"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
             <path
               d="M8.5 11.5L12 8L8.5 4.5"
-              stroke="#ffffff"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -154,7 +154,7 @@ function RebaseBanner() {
           >
             <path
               d="M4 12L12 4M12 12L4 4"
-              stroke="#ffffff"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -236,14 +236,16 @@ function CherryPickBanner() {
         alignItems: "center",
         gap: 8,
         padding: "6px 12px",
-        background: "#fff3e0",
-        borderBottom: "1px solid #ffe0b2",
+        background: "var(--warning-bg)",
+        borderBottom: "1px solid var(--warning-border)",
         fontSize: 12,
         flexShrink: 0,
       }}
     >
       <span style={{ fontSize: 14 }}>🍒</span>
-      <span style={{ fontWeight: 600, flex: 1, color: "#333" }}>{label}</span>
+      <span style={{ fontWeight: 600, flex: 1, color: "var(--banner-fg)" }}>
+        {label}
+      </span>
       <Tooltip text="Continue Cherry-pick (git cherry-pick --continue)">
         <div
           role="button"
@@ -267,14 +269,14 @@ function CherryPickBanner() {
           >
             <path
               d="M2.5 11.5L6 8L2.5 4.5"
-              stroke="#ffffff"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
             <path
               d="M8.5 11.5L12 8L8.5 4.5"
-              stroke="#ffffff"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -295,7 +297,7 @@ function CherryPickBanner() {
             }
           }}
           className="rebase-action-btn rebase-continue"
-          style={{ background: "#fb8c00" }}
+          style={{ background: "var(--warning-button-bg)" }}
         >
           <svg
             width="16"
@@ -306,7 +308,7 @@ function CherryPickBanner() {
           >
             <path
               d="M5 4L11 8L5 12"
-              stroke="#ffffff"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -337,7 +339,7 @@ function CherryPickBanner() {
           >
             <path
               d="M4 12L12 4M12 12L4 4"
-              stroke="#ffffff"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -426,14 +428,16 @@ function MergeBanner() {
         alignItems: "center",
         gap: 8,
         padding: "6px 12px",
-        background: "#e8f5e9",
-        borderBottom: "1px solid #c8e6c9",
+        background: "var(--success-bg)",
+        borderBottom: "1px solid var(--success-border)",
         fontSize: 12,
         flexShrink: 0,
       }}
     >
       <span style={{ fontSize: 14 }}>⚠️</span>
-      <span style={{ fontWeight: 600, flex: 1, color: "#333" }}>{label}</span>
+      <span style={{ fontWeight: 600, flex: 1, color: "var(--banner-fg)" }}>
+        {label}
+      </span>
       <Tooltip text="Resolve Conflicts" position="top">
         <div
           role="button"
@@ -457,14 +461,14 @@ function MergeBanner() {
           >
             <path
               d="M2.5 11.5L6 8L2.5 4.5"
-              stroke="#ffffff"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
             <path
               d="M8.5 11.5L12 8L8.5 4.5"
-              stroke="#ffffff"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -495,7 +499,7 @@ function MergeBanner() {
           >
             <path
               d="M4 12L12 4M12 12L4 4"
-              stroke="#ffffff"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"

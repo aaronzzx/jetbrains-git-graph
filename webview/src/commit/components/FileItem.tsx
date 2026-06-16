@@ -26,6 +26,7 @@ export function FileItem({
 
   const statusLabel = getStatusLabel(file.status);
   const statusColor = getStatusColor(file.status);
+  const displayColor = highlighted ? "var(--selected-fg)" : statusColor;
   const FileIcon = getCommitFileIcon(file.path);
 
   return (
@@ -51,7 +52,7 @@ export function FileItem({
       <span
         className="commit-file-name"
         title={file.path}
-        style={{ color: statusColor }}
+        style={{ color: displayColor }}
       >
         {fileName}
       </span>
@@ -60,7 +61,7 @@ export function FileItem({
           {dirPath}
         </span>
       )}
-      <span className="commit-file-status" style={{ color: statusColor }}>
+      <span className="commit-file-status" style={{ color: displayColor }}>
         {statusLabel}
       </span>
     </div>
@@ -89,17 +90,17 @@ function getStatusLabel(status: WorkingTreeFile["status"]): string {
 function getStatusColor(status: WorkingTreeFile["status"]): string {
   switch (status) {
     case "added":
-      return "rgb(7, 114, 23)";
+      return "var(--git-status-added-fg)";
     case "untracked":
-      return "rgb(217, 26, 41)";
+      return "var(--git-status-untracked-fg)";
     case "modified":
-      return "rgb(0, 45, 170)";
+      return "var(--git-status-modified-fg)";
     case "deleted":
-      return "rgb(97, 101, 115)";
+      return "var(--git-status-deleted-fg)";
     case "renamed":
-      return "#f0c674";
+      return "var(--git-status-renamed-fg)";
     case "conflicted":
-      return "rgb(217, 26, 41)";
+      return "var(--git-status-conflicted-fg)";
     default:
       return "inherit";
   }

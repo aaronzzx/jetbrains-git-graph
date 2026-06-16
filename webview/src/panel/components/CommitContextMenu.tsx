@@ -411,8 +411,8 @@ export function CommitContextMenu({
         top: position ? position.top : -9999,
         left: position ? position.left : -9999,
         zIndex: 9999,
-        background: "var(--vscode-menu-background, #fff)",
-        border: "1px solid var(--vscode-menu-border, #e0e0e0)",
+        background: "var(--menu-bg)",
+        border: "1px solid var(--menu-border)",
         borderRadius: 4,
         padding: "4px 0",
         minWidth: 200,
@@ -428,7 +428,7 @@ export function CommitContextMenu({
             key={`sep-${i}`}
             style={{
               height: 1,
-              background: "var(--vscode-menu-separatorBackground, #e8e8e8)",
+              background: "var(--menu-separator-bg)",
               margin: "4px 0",
             }}
           />
@@ -440,7 +440,7 @@ export function CommitContextMenu({
               padding: "6px 12px",
               cursor: item.disabled ? "default" : "pointer",
               opacity: item.disabled ? 0.5 : 1,
-              color: "var(--vscode-menu-foreground, #333)",
+              color: "var(--menu-fg)",
               fontSize: "13px",
               whiteSpace: "nowrap",
               display: "flex",
@@ -450,15 +450,14 @@ export function CommitContextMenu({
             onMouseEnter={(e) => {
               if (!item.disabled) {
                 (e.currentTarget as HTMLElement).style.background =
-                  "var(--vscode-menu-selectionBackground, #e8f0fe)";
+                  "var(--menu-selection-bg)";
                 (e.currentTarget as HTMLElement).style.color =
-                  "var(--vscode-menu-selectionForeground, #333)";
+                  "var(--menu-selection-fg)";
               }
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.background = "transparent";
-              (e.currentTarget as HTMLElement).style.color =
-                "var(--vscode-menu-foreground, #ccc)";
+              (e.currentTarget as HTMLElement).style.color = "var(--menu-fg)";
             }}
           >
             <span style={{ width: 16, flexShrink: 0, opacity: 0.7 }}>

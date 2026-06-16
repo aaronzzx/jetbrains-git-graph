@@ -11,12 +11,12 @@ import type { DiffFile } from "../types/git";
 // ---------------------------------------------------------------------------
 
 export const STATUS_COLORS: Record<string, string> = {
-  added: "rgb(7, 114, 23)",
-  modified: "rgb(0, 45, 170)",
-  deleted: "rgb(97, 101, 115)",
-  renamed: "#f0c674",
-  copied: "#f0c674",
-  conflicts: "rgb(217, 26, 41)",
+  added: "var(--git-status-added-fg)",
+  modified: "var(--git-status-modified-fg)",
+  deleted: "var(--git-status-deleted-fg)",
+  renamed: "var(--git-status-renamed-fg)",
+  copied: "var(--git-status-renamed-fg)",
+  conflicts: "var(--git-status-conflicted-fg)",
 };
 
 // ---------------------------------------------------------------------------
@@ -419,6 +419,7 @@ function FileRow({
   const statusColor = statusColorOverride
     ? (statusColorOverride(file) ?? defaultColor)
     : defaultColor;
+  const rowColor = isSelected ? "var(--selected-fg)" : statusColor;
   const FileIcon = getFileIcon(name);
 
   return (
@@ -438,7 +439,7 @@ function FileRow({
         alignItems: "center",
         gap: 4,
         padding: `2px 12px 2px ${12 + depth * 16}px`,
-        color: statusColor,
+        color: rowColor,
       }}
     >
       <FileIcon style={{ flexShrink: 0, width: 16, height: 16 }} />
@@ -454,12 +455,12 @@ function FileRow({
       {directoryHint && (
         <span
           style={{
-            color: "var(--description-fg)",
+            color: isSelected ? "var(--selected-fg)" : "var(--description-fg)",
             fontSize: "0.85em",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
-            opacity: 0.6,
+            opacity: isSelected ? 0.75 : 0.6,
           }}
         >
           {directoryHint}
